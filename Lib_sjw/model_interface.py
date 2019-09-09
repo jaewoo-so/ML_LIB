@@ -30,7 +30,6 @@ class myModel(metaclass=ABCMeta):
     def predict_proba(self , xtrain ):
         pass
 
-
 #xgboost
 from xgboost import XGBClassifier , XGBRegressor
 class myXGBClassifier(myModel):
@@ -49,6 +48,23 @@ class myXGBClassifier(myModel):
 
     def predict_proba(self , xs ):
         return self.model.predict_proba(xs)
+
+class myXGBBinary(myModel):
+    def make(self , make_params , rand_num = 7 ):
+        self.model = XGBClassifier(**make_params , random_state = rand_num )
+        return self
+
+    def fit(self ,  xtrain , ytrain , xtest =None, ytest =None , fit_params = {}):
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , verbose = False , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , eval_set=[(xtest,ytest)] , verbose = False ,**fit_params )
+        
+    def predict(self , xs ):
+        return self.model.predict(xs) 
+
+    def predict_proba(self , xs ):
+        return self.model.predict_proba(xs)[:,1]
 
 class myXGBRegressor(myModel):
     def make(self , make_params , rand_num = 7 ):
@@ -95,7 +111,27 @@ class myLGBMClassifier:
     def predict_proba(self , xs ):
         #return self.model.predict_proba(xs)[:,1] # sklearn version
         return self.model.predict(xs)
-    
+
+class myLGBMBinary:
+    def make(self , params , rand_num = 7 ):
+        self.params = params
+        return self
+
+    def fit(self ,  xtrain , ytrain , xtest =None, ytest =None , fit_params = {}):
+        params_all = {**self.params, **fit_params}
+        lgb_train = lgb.Dataset(xtrain, ytrain, params={'verbose': -1}, free_raw_data=False)
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model = lgb.train(params_all, lgb_train)
+        else:
+            lgb_eval = lgb.Dataset(xtest, ytest, params={'verbose': -1},free_raw_data=False)
+            self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval, verbose_eval=False)
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+        
+    def predict_proba(self, xs):
+        return self.model.predict(xs)
+
 class myLGBMRegressor:
     def make(self , params , rand_num = 7 ):
         #self.model =  LGBMRegressor(**params , random_state = rand_num ) # sklearn version
@@ -144,6 +180,22 @@ class myCatBoostClassifier:
     def predict_proba(self , xs ):
         return self.model.predict_proba(xs)
 
+class myCatBoostBinary:
+    def make(self , params , rand_num = 7 ):
+        self.model =  CatBoostClassifier(**params , random_state = rand_num )
+        return self
+
+    def fit(self ,  xtrain , ytrain , xtest =None, ytest =None , fit_params = {}):
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , verbose = False , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , eval_set=[(xtest,ytest)] , verbose = False ,**fit_params )
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+        
+    def predict_proba(self , xs ):
+        return self.model.predict_proba(xs)[:,1]
 
 class myCatBoostRegressor:
     def make(self , params , rand_num = 7 ):
@@ -179,6 +231,20 @@ class myRandomForestClassifier(myModel):
     def predict_proba(self , xtrain ):
         return self.model.predict_proba(xtrain )
 
+class myRandomForestBinary(myModel):
+    def make(self , make_params  ):
+        self.model = RandomForestClassifier(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain , **fit_params)
+        
+    def predict(self , xs ):
+        return self.model.predict(xs)
+
+    def predict_proba(self , xtrain ):
+        return self.model.predict_proba(xtrain )[:,1]
+
 class myRandomForestRegressor(myModel):
     def make(self , make_params ):
         self.model = RandomForestRegressor(**make_params)
@@ -207,7 +273,21 @@ class mySVMClassifier(myModel):
         return self.model.predict(xs)
 
     def predict_proba(self , xtrain ):
-        return self.model.predict_proba(xtrain )
+        return self.model.predict_proba(xtrain)
+        
+class mySVMBinary(myModel):
+    def make(self , make_params  ):
+        self.model = SVC(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain  , **fit_params)
+        
+    def predict(self , xs ):
+        return self.model.predict(xs)
+
+    def predict_proba(self , xtrain ):
+        return self.model.predict_proba(xtrain )[:,1]
 
 class mySVMRegressor(myModel):
     def make(self , make_params  ):
@@ -225,7 +305,7 @@ class mySVMRegressor(myModel):
 
 #elasticnet
 from sklearn.linear_model import ElasticNet
-class myElasticNet_BinaryClassifier(myModel):
+class myElasticNetBinary(myModel):
     def make(self , make_params ):
         self.model = ElasticNet(**make_params )
         return self
@@ -269,6 +349,20 @@ class myGPClassifier(myModel):
     def predict_proba(self , xs ):
         return self.model.predict_proba(xs)
 
+class myGPBinary(myModel):
+    def make(self , make_params  ):
+        self.model = GaussianProcessClassifier(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain  , **fit_params)
+
+    def predict(self , xs , threshold = 0.5):
+        return self.model.predict
+                    
+    def predict_proba(self , xs ):
+        return self.model.predict_proba(xs)[:,1]
+
 class myGPRegressor(myModel):
     def make(self , make_params ):
         self.model = GaussianProcessRegressor(**make_params )
@@ -301,6 +395,20 @@ class myLDAClassifier(myModel):
     def predict_proba(self , xs ):
         return self.model.predict_proba(xs)
 
+class myLDABinary(myModel):
+    def make(self , make_params ):
+        self.model = LinearDiscriminantAnalysis(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain  , **fit_params)
+
+    def predict(self , xs , threshold = 0.5):
+        return self.model.predict(xs)
+                    
+    def predict_proba(self , xs ):
+        return self.model.predict_proba(xs)[:,1]
+
 #QDA
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 class myQDAClassifier(myModel):
@@ -316,4 +424,18 @@ class myQDAClassifier(myModel):
                     
     def predict_proba(self , xs ):
         return self.model.predict_proba(xs)
+
+class myQDABinary(myModel):
+    def make(self , make_params ):
+        self.model = QuadraticDiscriminantAnalysis(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain  , **fit_params)
+
+    def predict(self , xs , threshold = 0.5):
+        return self.model.predict(xs)
+                    
+    def predict_proba(self , xs ):
+        return self.model.predict_proba(xs)[:,1]
 

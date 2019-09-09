@@ -1,7 +1,6 @@
 name	experiment
-iterCount	2000
+iterCount	100
 learnErrorLog	learn_error.tsv
 testErrorLog	test_error.tsv
 timeLeft	time_left.tsv
-loss	Accuracy	max
-loss	CrossEntropy	min
+loss	RMSE	min

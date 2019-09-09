@@ -10,6 +10,7 @@ prs , rcs , avgpr , thres= GetPR(ytest,y_score,n_classes)
 ytest = onehot
 
 '''
+#Multi Class
 def GetPR(Y_test,y_score,n_classes):
     precision = dict()
     recall = dict()
@@ -31,6 +32,7 @@ def GetPR(Y_test,y_score,n_classes):
     print('Average precision score, macro-averaged over all classes: {0:0.4f}'.format(average_precision["macro"]))
     return precision , recall , average_precision , thres
 
+#Binary
 
 
 

@@ -99,7 +99,7 @@ def param_cat(mode , use_gpu = False, is_unbalance = False, random_num = 7):
         params_cat['eval_metric'] = 'RMSE'
     elif mode == 'binary':
         params_cat['objective'] = 'CrossEntropy'
-        params_cat['eval_metric'] = 'Accuracy'
+        params_cat['eval_metric'] = 'Accuracy' #AUC
     elif mode == 'classification':
         params_cat['objective'] = 'MultiClass'
         params_cat['eval_metric'] = 'MultiClass'
@@ -121,7 +121,7 @@ def param_svm(mode , njobs = -1, random_num = 7):
     params_svm = dict()
     params_svm['C'           ] = 0.9
     params_svm['kernel'      ] = 'rbf' # 'linear', 'poly'
-    if mode =='classification':
+    if mode !='regression':
          params_svm['probability'] = True
     return params_svm
     

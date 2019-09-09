@@ -11,7 +11,86 @@ def training_regression():
 def training_binary():
     pass
 from lightgbm import LGBMClassifier , LGBMRegressor
-# todo : save model 기능 추가해야 한다. 
+# todo : save model 기능 추가해야 한다.
+def training_fixedTest_noVal( mode, 
+                        model_generator, 
+                        model_params, 
+                        training_params, 
+                        metric_func, 
+                        X, y, X_test, 
+                        nradom= 7 , verbose = False):
+    '''
+    mode = [ 'regression' , 'binary' , 'classification']
+    def metric_func(y , pred_proba) -> obj
+    return -> fold_predict , fold_oof , fold_metric
+    '''
+    starttime = time()
+    if verbose:
+        print('-'*100)
+        print('Training {}  Model : {}'.format( model_generator.__class__.__name__))
+  
+    model = model_generator.make(model_params)
+    model.fit(X,y , training_params)
+
+    # result 
+    res_pred = model.predict_proba(X_test)
+
+        
+    print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
+    #print('-'*100)
+    return res_pred , model
+
+def training_Testfold_noVal( mode, 
+                       model_generator, 
+                       model_params, 
+                       training_params, 
+                       metric_func, 
+                       X, y,  
+                       test_nfold , nradom = 7 , verbose = False) :
+
+    starttime = time()
+    print('-'*100)
+    print('-'*100)
+    print('** Test Fold {} on Model : {} **'.format( test_nfold , model_generator.__class__.__name__))
+
+    test_fold_index = OrderedDict()
+
+    if mode == 'classification':
+        oof = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float)
+    else:
+        oof = np.zeros( (X.shape[0] ) , dtype = np.float)
+
+
+    
+    model_list = OrderedDict()
+
+    kfold = fold_splitter(mode , X , y , test_nfold , nradom)
+
+    for i , (train_index, test_index)  in enumerate(kfold.split(X,y)):
+        print()
+        print('* Test Fold {} *'.format( i ))        
+        xtrain, xtest = X[train_index], X[test_index]
+        ytrain, ytest = y[train_index], y[test_index]
+
+        # test_fold 인덱스 저장 
+        test_fold_index['fold'+str(i)] = test_index
+
+        # 폴드 실행
+        res_pred , fold_model = training_fixedTest_noVal(mode, model_generator, 
+                                                                model_params, 
+                                                                training_params, 
+                                                                metric_func, 
+                                                                xtrain, ytrain, xtest , verbose = verbose)
+        if mode == 'classification':
+            oof[test_index , : ] = np.array(list(res_pred.values()))
+        else:
+            oof[test_index ] = res_pred
+        
+        model_list['fold'+str(i)] = fold_model
+
+    return test_fold_index , oof, model_list
+
+
 def training_fixedTest( mode, 
                         model_generator, 
                         model_params, 
@@ -32,9 +111,9 @@ def training_fixedTest( mode,
     fold_metric=OrderedDict()
     
     if mode == 'classification':
-        fold_oof = np.zeros((y.shape[0] , len(np.unique(y))) )
+        fold_oof = np.zeros((y.shape[0] , len(np.unique(y))) , dtype = np.float)
     else:
-        fold_oof = np.zeros_like(y)
+        fold_oof = np.zeros_like(y , dtype = np.float)
 
 
     fold_predict = OrderedDict()
@@ -114,9 +193,9 @@ def training_Testfold( mode,
     test_fold_index = OrderedDict()
 
     if mode == 'classification':
-        oof = np.zeros( (val_nfold , X.shape[0]  , len(np.unique(y))) )
+        oof = np.zeros( (val_nfold , X.shape[0]  , len(np.unique(y))) , dtype = np.float)
     else:
-        oof = np.zeros( (X.shape[0] , val_nfold) )
+        oof = np.zeros( (X.shape[0] , val_nfold) , dtype = np.float)
 
 
     
