@@ -120,7 +120,8 @@ def param_rf(mode , njobs = -1, random_num = 7):
 def param_svm(mode , njobs = -1, random_num = 7):
     params_svm = dict()
     params_svm['C'           ] = 0.9
-    params_svm['kernel'      ] = 'rbf' # 'linear', 'poly'
+    params_svm['kernel'] = 'rbf'  # 'linear', 'poly'
+    params_svm['random_state'    ] = random_num
     if mode !='regression':
          params_svm['probability'] = True
     return params_svm

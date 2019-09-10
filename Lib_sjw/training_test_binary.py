@@ -44,8 +44,8 @@ def Test_Binary(xtrain , ytrain , xtest  , nfold = 5 , verbose = False):
     model_list['qda']  = mi.myQDABinary()
     
     param_list = OrderedDict ( )
-    param_list['xgb'] = mp .param_xgb ('binary' , len(np.unique(y)) , use_gpu= False )
-    param_list['lgb'] = mp .param_lgbm('binary' , len(np.unique(y)) , use_gpu= False )
+    param_list['xgb'] = mp .param_xgb ('binary' , len(np.unique(ytrain)) , use_gpu= False )
+    param_list['lgb'] = mp .param_lgbm('binary' , len(np.unique(ytrain)) , use_gpu= False )
     param_list['cat'] = mp .param_cat ('binary' , use_gpu= True , is_unbalance= False )
     param_list['rfc'] = mp .param_rf ('binary' )
     param_list['svm'] = mp .param_svm ('binary' )

@@ -16,6 +16,18 @@ def aucpr(y_true, y_scores):
 #endregion
 
 #region Pack
+def 
+
+
+def create_mean_pred_df(result , axis = 0):
+    res = {}
+    #correlation
+    for model_name in res:
+        pred_res = res[model_name][0]
+        pred_mean = np.array(list(pred_res.values())).mean(axis = axis)
+        res[model_name] = pred_mean
+    return pd.DataFrame(res)
+
 def mean_score_to_df(model_score):
     return pd.DataFrame.from_dict(model_score)
     
@@ -124,6 +136,26 @@ def t_test_models(src, names, cmap=plt.cm.Greys, title='', fig_size=(6, 6), save
     if save_path != None:
         plt.savefig(save_path)
     plt.show()
+
+# regression
+# regression에서 aucpr구하기
+import Lib_sjw.analysis as an
+from sklearn.preprocessing import MinMaxScaler
+
+def regression_aucpr(res , ytest , threshold):
+    '''
+    res = Test_Regression(Xtrain,ytrain,Xtest , 10)
+    '''
+    for model_name in res:
+        pred_res = res[model_name][0]
+        print(model_name)
+        for nfold in pred_res:
+            binary = np.where( ytest > threshold , 1 , 0 )
+            pred_norm = MinMaxScaler().fit_transform(pred_res[nfold].reshape(-1,1)) 
+            print('{} : {:.4f}'.format(nfold,an.aucpr( binary , pred_norm)))
+        
+
+#endregion
 
 
 
