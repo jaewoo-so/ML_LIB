@@ -2,8 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler 
 from sklearn.metrics import roc_auc_score, average_precision_score
 import numpy as np
-
+import numba as nb
 #region use training_fixedTest
+
 def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
     '''
     <ytest format>
@@ -38,7 +39,10 @@ def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
     pair_pr = {}
     for i in range(cor_selected.index.shape[0]):
         pair = cor_selected.index[i]
-    
+
+        already_exist = (pair[1] + pair[0]) in pair_pred.keys()
+        if already_exist: continue
+        
         df_pair = df_res[list(pair)] # df_res는 원본 데이터
         avg_val = df_pair.mean(axis = 1).values
         pair_pred[pair[0]+pair[1]] = avg_val 
@@ -54,8 +58,6 @@ def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
     pair_pr  = sorted(pair_pr.items(), key=lambda x: x[1] , reverse = True)
 
     return pair_pred, pair_auc , pair_pr
-    
-
 
 def result2df(res_all):
     '''
@@ -75,6 +77,7 @@ def result2df(res_all):
 def find_max_score(res_all , ytest_binary, verbose = False):
     single_res_auc = []
     single_res_pr = []
+    model_name_list = []
     for model_name in res_all:
         pred_res = res_all[model_name][0]
         print(model_name)
@@ -84,9 +87,16 @@ def find_max_score(res_all , ytest_binary, verbose = False):
             if verbose : print('{} : {:.4f}/{:.4f}'.format(nfold, roc_auc_score(binary , pred_norm) , average_precision_score( binary , pred_norm)))
             single_res_auc.append( roc_auc_score(binary , pred_norm)  )
             single_res_pr.append( average_precision_score( binary , pred_norm) )
+            model_name_list.append(model_name + str(nfold))
         
-        
-    print('auc max = {} , pr max = {}'.format(np.array(single_res_auc).max(), np.array(single_res_pr).max()))
+    kk = np.array(single_res_auc)
+    print(kk.shape)
+    aucmax = np.array(single_res_auc).max()
+    aucmax_idx = np.array(single_res_auc).argmax()
+    prmax = np.array(single_res_pr).max()
+    prmax_idx = np.array(single_res_pr).argmax()
+
+    print('auc max = {} / {}, pr max = {} / {}'.format(aucmax , model_name_list[aucmax_idx] , prmax , model_name_list[prmax_idx] ))
     
 if __name__ == '__main__':
     import sys

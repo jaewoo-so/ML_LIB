@@ -70,7 +70,7 @@ def plotly_plot(xs , ys , n_class , cmap_name = 'viridis' , title = '' , filenam
 
     # color amp
     viridis_cmap = mlt.cm.get_cmap('viridis') 
-    \ 
+    
      
      
      
