@@ -110,7 +110,7 @@ if __name__ == '__main__':
     
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
     
-    res1 = Test_Regression_noVal(xtrain , xtest , ytrain , ytest)
+    res1 = Test_Regression_noVal(xtrain , ytrain , xtest , 5,False)
     res2 = Test_Regression_TestFold_noVal(X,y,5)
 
     print('done')

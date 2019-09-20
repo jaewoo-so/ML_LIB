@@ -123,11 +123,11 @@ def Test_Classification_TestFold(X , y , nfold_test , nfold_val , verbose = True
     auc_score_list = OrderedDict()
     for name in name_list:
         print(name)
-        test_fold_index , oof, model_list = tr.training_Testfold('classification' , model_dict[name] , param_list[name] , fitpm_list[name] ,  metric_func , X , y , 5 , 5 ) 
+        test_fold_index , oof, model_list = tr.training_Testfold('classification' , model_dict[name] , param_list[name] , fitpm_list[name] ,  metric_func , X , y , nfold_test , nfold_val ) 
         result_list[name] = [test_fold_index , oof, model_list]
-        auc_score_list[name] = roc_auc_score(np.where(y > y.mean() , 1 ,0 ) , np.argmax(oof.mean(axis = 0) , axis = 1))
+        #auc_score_list[name] = roc_auc_score(np.where(y > 0.5 , 1 ,0 ) , np.argmax(oof.mean(axis = 0) , axis = 1))
     print('Test_Classification_TestFold Compelte')    
-
+    return result_list
 
 if __name__ == '__main__':
     data = load_iris()
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
     
-    #Test_Classification(xtrain , xtest , ytrain , ytest)
+    Test_Classification(xtrain , ytrain , xtest , 5,False)
     Test_Classification_TestFold(X,y,5,5)
 
     print('done')

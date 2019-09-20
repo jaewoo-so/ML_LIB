@@ -119,7 +119,7 @@ if __name__ == '__main__':
     
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
     
-    #Test_Regression(xtrain , xtest , ytrain , ytest)
+    Test_Regression(xtrain , ytrain , xtest , 5,False)
     Test_Regression_TestFold(X,y,5,5)
 
     print('done')

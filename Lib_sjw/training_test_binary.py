@@ -138,5 +138,5 @@ if __name__ == '__main__':
 
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
 
-    #Test_Binary(xtrain , xtest , ytrain , ytest)
+    Test_Binary(xtrain , ytrain , xtest , 5,False)
     Test_Binary_TestFold(X,y,5,5)

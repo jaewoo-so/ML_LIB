@@ -16,9 +16,6 @@ def aucpr(y_true, y_scores):
 #endregion
 
 #region Pack
-
-
-
 def create_mean_pred_df(result , axis = 0):
     res = {}
     #correlation
@@ -62,7 +59,6 @@ def mean_score_each_testset(y , res, score_func = roc_auc_score):
 
             for val_fold in range(test_fold_pred.shape[1]):
                 pred_of_valfold = test_fold_pred[:,val_fold] # validation셋 하나의 예측값만 가져온 것 
-
 
                 #여기서 하나의 validation에 대한 예측 값을 가지고 스코어링 
                 val_score = score_func(y[idx] , pred_of_valfold)
@@ -139,7 +135,6 @@ def t_test_models(src, names, cmap=plt.cm.Greys, title='', fig_size=(6, 6), save
 
 # regression
 # regression에서 aucpr구하기
-import Lib_sjw.analysis as an
 from sklearn.preprocessing import MinMaxScaler
 
 def regression_aucpr(res , ytest , threshold):
@@ -156,6 +151,27 @@ def regression_aucpr(res , ytest , threshold):
         
 
 #endregion
+# 결과 로딩
+import pickle 
+import numpy as np
+import pandas as pd 
+from sklearn.metrics import roc_auc_score
+if __name__ == '__main__':
+    with open(r'E:\\00_proj\\CDSS\\code_final_v02/result/result_list_on_normalized_dataset1234.pickle' , 'rb') as f:
+        result_list = pickle.load(f)
 
+    # 사용 데이터 세트 로딩
+    df_list = []
+    for i in range(4):
+        res = pd.read_csv(r'E:\\00_proj\\CDSS\\code_final_v02/input/data_norm_imputed{}.csv'.format(i) )
+        df_list.append(res)
+    print('done')
+    score_list = []
+    each_score_list = []
+    for i , result in enumerate(result_list):
+        print(i)
+        model_score , model_each_score = mean_score_each_testset( df_list[i].iloc[:,-1] , result , roc_auc_score)
+        score_list.append(model_score)
+        each_score_list.append(model_each_score)
 
 
