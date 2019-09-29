@@ -303,6 +303,36 @@ class mySVMRegressor(myModel):
     def predict_proba(self , xs ):
         return self.model.predict(xs)
 
+#
+from sklearn.linear_model import LinearRegression , LogisticRegression
+class myLinearRegressionBinary(myModel):
+    def make(self , make_params ):
+        self.model = LogisticRegression(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain , **fit_params)
+
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+                    
+    def predict_proba(self , xs ):
+        return self.model.predict(xs)
+
+class myLinearRegressionRegressor(myModel):
+    def make(self , make_params ):
+        self.model = LinearRegression(**make_params )
+        return self
+
+    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
+        self.model.fit(xtrain , ytrain  , **fit_params)
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+                    
+    def predict_proba(self , xs ):
+        return self.model.predict(xs)
+
 #elasticnet
 from sklearn.linear_model import ElasticNet
 class myElasticNetBinary(myModel):

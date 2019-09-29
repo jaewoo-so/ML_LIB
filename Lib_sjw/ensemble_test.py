@@ -4,27 +4,6 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 import numpy as np
 import numba as nb
 #region use training_fixedTest
-import multiprocessing
-
-
-
-def test(i , cor_selected , df_res):
-    for i in range(cor_selected.index.shape[0]):
-        pair = cor_selected.index[i]
-
-        already_exist = (pair[1] + pair[0]) in pair_pred.keys()
-        if already_exist: continue
-        
-        df_pair = df_res[list(pair)] # df_res는 원본 데이터
-        avg_val = df_pair.mean(axis = 1).values
-        pair_pred[pair[0]+pair[1]] = avg_val 
-
-        # 이제 원래 레이블 ytest와 비교해본다. 
-        pred_norm = MinMaxScaler().fit_transform(avg_val.reshape(-1, 1))  # [0,1]노멀라이즈
-        temp1 = pair[0] + pair[1]
-        temp2 = roc_auc_score(ytest_binary , pred_norm) 
-        pair_auc[pair[0]+pair[1]] = roc_auc_score(ytest_binary , pred_norm) 
-        pair_pr[pair[0]+pair[1]] = average_precision_score( ytest_binary , pred_norm)
 
 def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
     '''
@@ -58,8 +37,6 @@ def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
     pair_pred = {}
     pair_auc = {}
     pair_pr = {}
-
-    # pool 처리 가능할 듯 
     for i in range(cor_selected.index.shape[0]):
         pair = cor_selected.index[i]
 

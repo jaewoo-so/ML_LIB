@@ -33,6 +33,46 @@ def model_each_score_to_flat_df(model_each_score):
         model_each_score[k] = v.flatten()
     return pd.DataFrame.from_dict(model_each_score)
     
+def mean_score_each_valset(y , res, score_func = roc_auc_score):
+    '''
+    res : result of Test_Binary_TestFold
+    -> model_score , model_each_score
+    '''
+    model_score      = OrderedDict()
+    model_each_score = OrderedDict()
+
+    for model_name in res:
+        model_res = res[model_name]
+
+        prediction   = model_res[0]
+       
+        # 각 테스트 셋의 평균 저장변수 
+        test_score_list = []
+
+        for k , idx in test_idx.items():
+            test_fold_pred = prediction[idx,:] # 각각의 테스트 셋에대한 validation갯수만큼의 예측 값이 들어있다. 
+
+            # 한개의 테스트 세트에 대해서 validation 갯수 만큼의 스코어를 저장
+            score_each_val = []
+
+            for val_fold in range(test_fold_pred.shape[1]):
+                pred_of_valfold = test_fold_pred[:,val_fold] # validation셋 하나의 예측값만 가져온 것 
+
+                #여기서 하나의 validation에 대한 예측 값을 가지고 스코어링 
+                val_score = score_func(y[idx] , pred_of_valfold)
+                score_each_val.append(val_score)
+
+            test_fold_score = np.array(score_each_val) # 한개의 테스트 세트에 대한 각 validation에 대해 예측값들
+            test_score_list.append(test_fold_score)
+
+        model_all_score = np.array(test_score_list)
+        print( f'{model_name} mean : {model_all_score.mean()*100:0.2f}')
+
+        # save
+        model_score[model_name] = [model_all_score.mean()]
+        model_each_score[model_name] = model_all_score
+    return model_score , model_each_score
+
 def mean_score_each_testset(y , res, score_func = roc_auc_score):
     '''
     res : result of Test_Binary_TestFold
