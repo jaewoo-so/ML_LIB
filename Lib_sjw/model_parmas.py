@@ -127,6 +127,10 @@ def param_svm(mode , njobs = -1, random_num = 7):
          params_svm['random_state'    ] = random_num
     return params_svm
     
+def param_lr(mode , njobs = -1, random_num = 7):
+    params_lr = dict()
+    return params_lr
+
 def param_elst(mode , njobs = -1, random_num = 7):
     params_elst = dict()
     params_elst['alpha'       ] = 0.7

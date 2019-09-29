@@ -3,6 +3,7 @@ import numpy as np
 from time import time
 import datetime
 from collections import OrderedDict
+import pandas as pd
 
 # 5-fold
 def training_regression():
@@ -68,9 +69,14 @@ def training_Testfold_noVal( mode,
 
     for i , (train_index, test_index)  in enumerate(kfold.split(X,y)):
         print()
-        print('* Test Fold {} *'.format( i ))        
-        xtrain, xtest = X[train_index], X[test_index]
-        ytrain, ytest = y[train_index], y[test_index]
+        print('* Test Fold {} *'.format(i))
+        if type(X) == pd.core.frame.DataFrame:
+            xtrain, xtest = X.loc[train_index], X.loc[test_index]
+            ytrain, ytest = y.loc[train_index], y.loc[test_index]
+            
+        else:
+            xtrain, xtest = X[train_index], X[test_index]
+            ytrain, ytest = y[train_index], y[test_index]
 
         # test_fold 인덱스 저장 
         test_fold_index['fold'+str(i)] = test_index
@@ -121,10 +127,16 @@ def training_fixedTest( mode,
    
     kfold = fold_splitter(mode , X , y , nfold , nradom)
 
-    for i , (train_index, val_index)  in enumerate(kfold.split(X,y)):
-        xtrain, xval = X[train_index], X[val_index]
-        ytrain, yval = y[train_index], y[val_index]
+    for i, (train_index, val_index) in enumerate(kfold.split(X, y)):
+        if type(X) == pd.core.frame.DataFrame:
+            xtrain, xval = X.loc[train_index], X.loc[val_index]
+            ytrain, yval = y.loc[train_index], y.loc[val_index]
+            
+        else:
+            xtrain, xval = X[train_index], X[val_index]
+            ytrain, yval = y[train_index], y[val_index]
 
+        print(xtrain.isna().any(),ytrain.isna().any(),xval.isna().any(),yval.isna().any())
         model = model_generator.make(model_params)
         model.fit(xtrain,ytrain,xval,yval , training_params)
 
@@ -138,7 +150,7 @@ def training_fixedTest( mode,
         else:
             fold_oof[val_index] = res_oof
 
-        
+        print(res_oof.max())
         fold_predict['fold'+str(i)] = res_pred
         fold_metric['fold'+str(i)] = metric_func( yval , res_oof)
         fold_model['fold'+str(i)] = model

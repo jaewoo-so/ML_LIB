@@ -9,6 +9,7 @@ from sklearn.datasets import load_boston , load_iris , load_breast_cancer
 from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score
 from sklearn.model_selection import train_test_split
 import numpy as np
+import pandas as pd
 
 from collections import OrderedDict
 
@@ -116,10 +117,15 @@ if __name__ == '__main__':
     data = load_boston()
     X = data.data
     y = data.target
-    
+
+    df = pd.DataFrame(X, columns=data.feature_names)
+    df['target'] = y
+    X = df.iloc[:,:-1]
+    y = df.iloc[:, -1]
+
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
-    
-    Test_Regression(xtrain , ytrain , xtest , 5,False)
+   
+    Test_Regression(xtrain , ytrain , xtest , 5)
     Test_Regression_TestFold(X,y,5,5)
 
     print('done')

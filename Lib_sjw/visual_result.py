@@ -4,8 +4,8 @@ import seaborn as sns
 
 #Boxplot
 def box_plot(df_res , save_path):
-    top = df_res.max().max() + 0.01
-    bot = df_res.min().min() - 0.01
+    top = df_res.max().max() + df_res.max().max()*0.05
+    bot = df_res.min().min() - df_res.min().min()*0.05
     
     fig , ax = plt.subplots(1,1,figsize = (14,8))
     sns.boxplot( width = 0.3, data = df_res, ax = ax )
