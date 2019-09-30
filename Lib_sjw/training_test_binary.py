@@ -121,12 +121,14 @@ def Test_Binary_TestFold(X , y , nfold_test , nfold_val , verbose = True):
     # Result
     result_list = OrderedDict()
     auc_score_list = OrderedDict()
+
     for name in name_list:
         print(name)
         test_fold_index , oof, model_list = tr.training_Testfold('binary' , model_dict[name] , param_list[name] , fitpm_list[name] ,  metric_func , 
                                                                      X , y , nfold_test , nfold_val , verbose ) 
         result_list[name] = [test_fold_index , oof, model_list]
-        auc_score_list[name] = roc_auc_score(y, oof.mean(axis = 1) )
+        auc_score_list[name] = roc_auc_score(y, oof.mean(axis=1))
+        print('done')
     print('Test_Classification_TestFold Compelte')    
     return result_list
 #endregion
@@ -144,7 +146,7 @@ if __name__ == '__main__':
         df = pd.DataFrame(X, columns=data['feature_names'])
         df['target'] = y
         df = df.reset_index(drop=True)
-        X = df.iloc[:, :-1]
+        X = df.iloc[:, :-1].astype('float16')
         y = df.iloc[:, -1]
         y=y.reset_index(drop=True)
         xtrain, xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2)
@@ -155,8 +157,8 @@ if __name__ == '__main__':
         print(ytrain.isna().any())
         print(ytest.isna().any())
         '''
-        Test_Binary(xtrain , ytrain , xtest , 5,False)
-        Test_Binary_TestFold(X,y,5,5)
+        #Test_Binary(xtrain , ytrain , xtest , 5,False)
+        Test_Binary_TestFold(X,y,2,2)
 
     def np_test():
         data = load_breast_cancer()
