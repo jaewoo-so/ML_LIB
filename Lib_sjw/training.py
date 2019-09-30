@@ -129,8 +129,8 @@ def training_fixedTest( mode,
 
     for i, (train_index, val_index) in enumerate(kfold.split(X, y)):
         if type(X) == pd.core.frame.DataFrame:
-            xtrain, xval = X.loc[train_index], X.loc[val_index]
-            ytrain, yval = y.loc[train_index], y.loc[val_index]
+            xtrain, xval = X.iloc[train_index], X.iloc[val_index]
+            ytrain, yval = y.iloc[train_index], y.iloc[val_index]
             
         else:
             xtrain, xval = X[train_index], X[val_index]

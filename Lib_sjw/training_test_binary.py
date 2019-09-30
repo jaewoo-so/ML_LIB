@@ -131,12 +131,41 @@ def Test_Binary_TestFold(X , y , nfold_test , nfold_val , verbose = True):
     return result_list
 #endregion
 
+
+
+
+import pandas as pd
 if __name__ == '__main__':
-    data = load_breast_cancer()
-    X = data.data
-    y = data.target
 
-    xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
+    def df_test(): # 인덱스로 나눌때 iloc를 써야한다. loc쓰면 경우에 따라서 nan이 리턴되는 경우도 있었다. 
+        data = load_breast_cancer()
+        X = data.data
+        y = data.target
+        df = pd.DataFrame(X, columns=data['feature_names'])
+        df['target'] = y
+        df = df.reset_index(drop=True)
+        X = df.iloc[:, :-1]
+        y = df.iloc[:, -1]
+        y=y.reset_index(drop=True)
+        xtrain, xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2)
+        '''
+        #확인 완료 
+        print(xtrain.isna().any())
+        print(xtest.isna().any())
+        print(ytrain.isna().any())
+        print(ytest.isna().any())
+        '''
+        Test_Binary(xtrain , ytrain , xtest , 5,False)
+        Test_Binary_TestFold(X,y,5,5)
 
-    #Test_Binary(xtrain , ytrain , xtest , 5,False)
-    Test_Binary_TestFold(X,y,5,5)
+    def np_test():
+        data = load_breast_cancer()
+        X = data.data
+        y = data.target
+        df = pd.DataFrame()
+        xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
+        #Test_Binary(xtrain , ytrain , xtest , 5,False)
+        Test_Binary_TestFold(X, y, 5, 5)
+        
+
+    df_test()
