@@ -1,5 +1,6 @@
 from abc import *
 import numpy as np
+import pandas as pd
 import warnings
 warnings.filterwarnings("ignore") 
 '''
@@ -416,14 +417,24 @@ class myLDAClassifier(myModel):
         self.model = LinearDiscriminantAnalysis(**make_params )
         return self
 
-    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
-        self.model.fit(xtrain , ytrain  , **fit_params)
+    def fit(self, xtrain, ytrain, xtest=None, ytest=None, fit_params={}):
+        if type(xtrain) == pd.core.frame.DataFrame:
+            self.model.fit(xtrain.astype('float32') , ytrain.astype('float32')  , **fit_params)
+        else:
+            self.model.fit(xtrain , ytrain  , **fit_params)
+        
 
-    def predict(self , xs , threshold = 0.5):
-        return self.model.predict(xs)
+    def predict(self, xs, threshold=0.5):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict(xs.astype('float32'))
+        else:
+            return self.model.predict(xs)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict_proba(xs.astype('float32'))
+        else:
+            return self.model.predict_proba(xs)
 
 class myLDABinary(myModel):
     def make(self , make_params ):
@@ -431,29 +442,49 @@ class myLDABinary(myModel):
         return self
 
     def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
-        self.model.fit(xtrain , ytrain  , **fit_params)
+        if type(xtrain) == pd.core.frame.DataFrame:
+            self.model.fit(xtrain.astype('float32') , ytrain.astype('float32')  , **fit_params)
+        else:
+            self.model.fit(xtrain , ytrain  , **fit_params)
 
     def predict(self , xs , threshold = 0.5):
-        return self.model.predict(xs)
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict(xs.astype('float32'))
+        else:
+            return self.model.predict(xs)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)[:,1]
+    def predict_proba(self, xs):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict_proba(xs.astype('float32'))[:,1]
+        else:
+            return self.model.predict_proba(xs)[:,1]
 
 #QDA
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
 class myQDAClassifier(myModel):
     def make(self , make_params ):
         self.model = QuadraticDiscriminantAnalysis(**make_params )
         return self
 
-    def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
-        self.model.fit(xtrain , ytrain  , **fit_params)
+    def fit(self, xtrain, ytrain, xtest=None, ytest=None, fit_params={}):
+        if type(xtrain) == pd.core.frame.DataFrame:
+            self.model.fit(xtrain.astype('float32') , ytrain.astype('float32')  , **fit_params)
+        else:
+            self.model.fit(xtrain , ytrain  , **fit_params)
+        
 
-    def predict(self , xs , threshold = 0.5):
-        return self.model.predict(xs)
+    def predict(self, xs, threshold=0.5):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict(xs.astype('float32'))
+        else:
+            return self.model.predict(xs)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict_proba(xs.astype('float32'))
+        else:
+            return self.model.predict_proba(xs)
 
 class myQDABinary(myModel):
     def make(self , make_params ):
@@ -461,11 +492,20 @@ class myQDABinary(myModel):
         return self
 
     def fit(self , xtrain , ytrain , xtest =None, ytest =None , fit_params = {} ):
-        self.model.fit(xtrain , ytrain  , **fit_params)
+        if type(xtrain) == pd.core.frame.DataFrame:
+            self.model.fit(xtrain.astype('float32') , ytrain.astype('float32')  , **fit_params)
+        else:
+            self.model.fit(xtrain , ytrain  , **fit_params)
 
     def predict(self , xs , threshold = 0.5):
-        return self.model.predict(xs)
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict(xs.astype('float32'))
+        else:
+            return self.model.predict(xs)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)[:,1]
+    def predict_proba(self, xs):
+        if type(xs) == pd.core.frame.DataFrame:
+            return self.model.predict_proba(xs.astype('float32'))[:,1]
+        else:
+            return self.model.predict_proba(xs)[:,1]
 

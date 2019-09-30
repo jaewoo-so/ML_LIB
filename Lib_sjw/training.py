@@ -129,16 +129,15 @@ def training_fixedTest( mode,
 
     for i, (train_index, val_index) in enumerate(kfold.split(X, y)):
         if type(X) == pd.core.frame.DataFrame:
-            xtrain, xval = X.loc[train_index], X.loc[val_index]
-            ytrain, yval = y.loc[train_index], y.loc[val_index]
+            xtrain, xval = X.iloc[train_index], X.iloc[val_index]
+            ytrain, yval = y.iloc[train_index], y.iloc[val_index]
             
         else:
             xtrain, xval = X[train_index], X[val_index]
             ytrain, yval = y[train_index], y[val_index]
 
-        print(xtrain.isna().any(),ytrain.isna().any(),xval.isna().any(),yval.isna().any())
         model = model_generator.make(model_params)
-        model.fit(xtrain,ytrain,xval,yval , training_params)
+        model.fit(xtrain,ytrain,xval,yval , training_params) #이쪽에 문제가 있다. 
 
         # result 
         res_oof = model.predict_proba(xval)
@@ -150,7 +149,6 @@ def training_fixedTest( mode,
         else:
             fold_oof[val_index] = res_oof
 
-        print(res_oof.max())
         fold_predict['fold'+str(i)] = res_pred
         fold_metric['fold'+str(i)] = metric_func( yval , res_oof)
         fold_model['fold'+str(i)] = model
@@ -218,8 +216,14 @@ def training_Testfold( mode,
     for i , (train_index, test_index)  in enumerate(kfold.split(X,y)):
         print()
         print('* Test Fold {} *'.format( i ))        
-        xtrain, xtest = X[train_index], X[test_index]
-        ytrain, ytest = y[train_index], y[test_index]
+      
+        if type(X) == pd.core.frame.DataFrame:
+            xtrain, xtest = X.iloc[train_index], X.iloc[test_index]
+            ytrain, ytest = y.iloc[train_index], y.iloc[test_index]
+            
+        else:
+            xtrain, xtest = X[train_index], X[test_index]
+            ytrain, ytest = y[train_index], y[test_index]
 
         # test_fold 인덱스 저장 
         test_fold_index['fold'+str(i)] = test_index
