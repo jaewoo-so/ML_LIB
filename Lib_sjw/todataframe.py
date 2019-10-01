@@ -39,8 +39,21 @@ def result2df_rowmodel_colfold(res_all , ytest , score_func):
         result = result.append(score , ignore_index=True)
     return result
 
+def result2df_rowsample_colmodel_train(res_all):
+    '''
+    res_all format in Test_Regression
 
-def result2df_rowsample_colmodel(res_all):
+    fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest( )
+    res_all[name] = [ fold_predict , fold_oof , fold_metric , fold_models ]
+    '''
+    res = {}
+    for model_name in res_all:
+        pred_res = res_all[model_name][1]
+        res[model_name] = pred_res
+    df_res = pd.DataFrame(res)
+    return df_res
+
+def result2df_rowsample_colmodel_test(res_all):
     '''
     res_all format in Test_Regression
 
@@ -52,6 +65,24 @@ def result2df_rowsample_colmodel(res_all):
         pred_res = res_all[model_name][0]
         for i ,nfold in enumerate(pred_res):
             res[model_name+str(i)] = pred_res[nfold]
+    df_res = pd.DataFrame(res)
+    return df_res
+
+def result2df_rowsample_colmodel_testmean(res_all):
+    '''
+    res_all format in Test_Regression
+
+    fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest( )
+    res_all[name] = [ fold_predict , fold_oof , fold_metric , fold_models ]
+    '''
+    res = {}
+    for model_name in res_all:
+        pred_res = res_all[model_name][0]
+
+        result = []
+        for i ,nfold in enumerate(pred_res):
+            result.append(pred_res[nfold])
+        res[model_name] = np.mean(result , axis = 0)
     df_res = pd.DataFrame(res)
     return df_res
 
