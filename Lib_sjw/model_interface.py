@@ -64,7 +64,8 @@ class myXGBBinary(myModel):
     def predict(self , xs ):
         return self.model.predict(xs) 
 
-    def predict_proba(self , xs ):
+    def predict_proba(self, xs):
+       
         return self.model.predict_proba(xs)[:,1]
 
 class myXGBRegressor(myModel):

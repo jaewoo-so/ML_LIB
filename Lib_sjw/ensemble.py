@@ -82,6 +82,7 @@ def esemble_binary(df_res , ytest_binary, lower , upper  , base_value):
 
     return pair_pred, pair_auc , pair_pr
 
+# todataframe으로 옴겨야한다. 
 def result2df(res_all):
     '''
     res_all format

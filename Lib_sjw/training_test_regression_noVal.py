@@ -112,7 +112,7 @@ if __name__ == '__main__':
     y = data.target[:20]
     df = pd.DataFrame(X, columns=data.feature_names)
     df['target'] = y
-
+    
     x = df.iloc[:,:-1]
     y = df.iloc[:, -1]
     

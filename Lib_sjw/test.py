@@ -47,7 +47,7 @@ xgb_params = {'bagging_fraction': 0.8993155305338455,
               'feature_fraction': 0.7989765808988153, 
               'gamma': 0.6665437467229817, 
               'learning_rate': 0.013887824598276186, 
-              'max_depth': 16.0, 
+              'max_depth': 16, 
               'min_child_samples': 170, 
               'num_leaves': 220, 
               'reg_alpha': 0.39871702770778467,
@@ -183,10 +183,15 @@ y = pd.read_hdf(input_folder + 'train_transaction.h5')['isFraud'].copy()
 
 
 
-df = pd.concat([X,y] , axis = 1)
+df = pd.concat([X, y], axis=1)
+df = df.drop(['DT'], axis=1)
+X_test = X_test.drop(['DT'] , axis = 1)
 df = df.reset_index(drop=True)
-X = df.iloc[:,:-1]
-y = df.iloc[:,-1]
+X = df.iloc[:50,2:30]
+y = df.iloc[:50, -1]
+X_test = X_test.iloc[:50,2:30]
+print(X.columns)
+
 
 res = Test_Binary(X, y ,X_test , 5)
 
