@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
+from sklearn.metrics import roc_curve, auc
 
 #Boxplot
 def box_plot(df_res , save_path):
@@ -34,4 +35,52 @@ def test_fold_performance(result_list , y_true , score_func):
             model_res.append(score)
         print('Average : {:.4f}%'.format( np.array(model_res).mean()))
         print()
-        # 현재 테스트 폴드에서 
+        # 현재 테스트 폴드에서
+        
+def roc_auc_multi_plot(y_test, y_score,n_classes , save_path = None):
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+
+    # Compute micro-average ROC curve and ROC area
+    fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
+    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+    plt.figure()
+    lw = 2
+    plt.plot(fpr[2], tpr[2], color='darkorange',
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[2])
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    if save_path is not None:
+        plt.savefig(save_path)
+    plt.show()
+
+def roc_auc_binary_plot(y_test, y_score , title = None,save_path = None):
+    fpr, tpr, _ = roc_curve(y_test, y_score)
+    roc_auc = auc(fpr, tpr)
+    plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange',
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    if title is not None:
+        plt.title(title)
+    else:
+        plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    if save_path is not None:
+        plt.savefig(save_path)
+    plt.show()
+

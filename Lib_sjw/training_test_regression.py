@@ -61,7 +61,11 @@ def Test_Regression(xtrain , ytrain , xtest  , nfold = 5):
     for name in name_list:
         print(name)
         fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest('regression' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , 5  ) 
-        result_list[name] = [fold_predict , fold_oof , fold_metric , fold_models]
+        result_list[name] = [fold_predict, fold_oof, fold_metric, fold_models]
+        
+        print(fold_models['fold1'].predict_proba(xtrain)[10], fold_models['fold4'].predict_proba(xtrain)[10])
+        print()
+
     print('Test_Regression Complete')
     
 
@@ -124,7 +128,7 @@ if __name__ == '__main__':
     y = df.iloc[:, -1]
 
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
-   
+    print(xtrain.shape,ytrain.values.shape)
     Test_Regression(xtrain , ytrain , xtest , 5)
     Test_Regression_TestFold(X,y,5,5)
 

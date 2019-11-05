@@ -4,6 +4,7 @@ from time import time
 import datetime
 from collections import OrderedDict
 import pandas as pd
+import copy
 
 # 5-fold
 def training_regression():
@@ -149,14 +150,17 @@ def training_fixedTest( mode,
         else:
             fold_oof[val_index] = res_oof
 
-        fold_predict['fold'+str(i)] = res_pred
-        fold_metric['fold'+str(i)] = metric_func( yval , res_oof)
-        fold_model['fold'+str(i)] = model
-
+        fold_predict['fold'+ str(i)] = res_pred
+        fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
+        fold_model['fold'  + str(i)] = copy.deepcopy(model)
+        
+     
+        model = None
         if verbose: print('{} Fold score : {:.4f}'.format(i , fold_metric['fold'+str(i)] ))
             
     print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
     #print('-'*100)
+
     return fold_predict , fold_oof , fold_metric , fold_model
 
 
@@ -256,6 +260,29 @@ def train_model(model_generator , model_params , training_params ):
 
 
 
+# --- Error Log---
+'''
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+<timed exec> in <module>
+
+<ipython-input-14-cc8341b50256> in Test_Regression(xtrain, ytrain, xtest, nfold)
+     36     for name in name_list:
+     37         print(name)
+---> 38         fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest('regression' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , nfold  )
+     39         result_list[name] = [fold_predict , fold_oof , fold_metric , fold_models]
+     40     print('Test_Regression Complete')
+
+E:\01_PProj\ML_LIB\Lib_sjw\training.py in training_fixedTest(mode, model_generator, model_params, training_params, metric_func, X, y, X_test, nfold, nradom, verbose)
+    148             fold_oof[val_index,:] = res_oof
+    149         else:
+--> 150             fold_oof[val_index] = res_oof
+    151 
+    152         fold_predict['fold'+str(i)] = res_pred
+
+ValueError: shape mismatch: value array of shape (2418,) could not be broadcast to indexing result of shape (2418,1)
+y의 모양이 (100,) 이 아닌 (100,1) 일 경우 발생. flatten쓰면 된다. 
+'''
 
 # metric binary
 '''

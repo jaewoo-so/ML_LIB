@@ -1,5 +1,5 @@
 import pandas as pd
-
+from collections import OrderedDict
 
 
 def result2df_rowmodel_colfold_oof(res_all , ytest , score_func):
@@ -68,6 +68,21 @@ def result2df_rowsample_colmodel_test(res_all):
     df_res = pd.DataFrame(res)
     return df_res
 
+def result2df_rowsample_colmodel_test_nonfixtest(res_all):
+    '''
+    res_all format in Test_Regression
+
+    fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest( )
+    res_all[name] = [ fold_predict , fold_oof , fold_metric , fold_models ]
+    '''
+    res = {}
+    for model_name in res_all:
+        pred_res = res_all[model_name][0]
+        for i ,nfold in enumerate(pred_res):
+            res[model_name+str(i)] = pred_res[nfold]
+    df_res = pd.DataFrame(res)
+    return df_res
+
 def result2df_rowsample_colmodel_testmean(res_all):
     '''
     res_all format in Test_Regression
@@ -85,6 +100,21 @@ def result2df_rowsample_colmodel_testmean(res_all):
         res[model_name] = np.mean(result , axis = 0)
     df_res = pd.DataFrame(res)
     return df_res
+
+# --- dictionary each model ---
+def result2dict_name_model(res_all):
+    '''
+    res_all format in Test_Regression
+
+    fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest( )
+    res_all[name] = [ fold_predict , fold_oof , fold_metric , fold_models ]
+    '''
+    res = OrderedDict()
+    for model_name in res_all:
+        pred_res = res_all[model_name][3]
+        for i ,nfold in enumerate(pred_res):
+            res[model_name + str(i)] = pred_res[nfold]
+    return res
 
 import pickle
 from sklearn.metrics import roc_auc_score
