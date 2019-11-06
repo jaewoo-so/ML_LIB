@@ -1,9 +1,13 @@
-# ML_LIB : machine learning toolkit 
-author : so jae woo
-date   : 2019.08.30
+# ML_LIB : machine learning toolkit  
+
+author : so jae woo  
+date   : 2019.08.30  
+
 ---
-### usage
+### Usage  
+
 please see ref_code and test_code
+
 ---
 ### Todo
 - [ ] SVM Multi core 또는 gpu용으로 바꾸기 
