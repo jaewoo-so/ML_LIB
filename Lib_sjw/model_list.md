@@ -3,6 +3,6 @@ model_interface.py
 - [x] tree based : rf , extra tree , 
 - [x] svm
 - [x] linear
-- [ ] lda , qda
+- [x] lda , qda
 -
 -

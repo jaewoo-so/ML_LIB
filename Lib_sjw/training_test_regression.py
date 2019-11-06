@@ -67,6 +67,7 @@ def Test_Regression(xtrain , ytrain , xtest  , nfold = 5):
         print()
 
     print('Test_Regression Complete')
+    return result_list
     
 
 def Test_Regression_TestFold(X , y , nfold_test , nfold_val , verbose = True):

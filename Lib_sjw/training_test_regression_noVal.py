@@ -54,6 +54,7 @@ def Test_Regression_noVal(xtrain , xtest , ytrain ):
         res_pred , model = tr.training_fixedTest_noVal('regression' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest ) 
         result_list[name] = [res_pred , model]
     print('Test_Regression Complete')
+    return result_list
     
 
 def Test_Regression_TestFold_noVal(X , y , nfold_test , verbose = True):
