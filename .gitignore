@@ -14,3 +14,4 @@ Lib_sjw/__pycache__/model_interface.cpython-36.pyc
 Lib_sjw/__pycache__/ensemble.cpython-36.pyc
 Lib_sjw/__pycache__/analysis.cpython-36.pyc
 *.pyc
+*.tmp
