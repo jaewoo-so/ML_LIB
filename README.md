@@ -1,10 +1,8 @@
-# ML_LIB
-# author : so jae woo
-# date   : 2019.08.30
+# ML_LIB : machine learning toolkit 
+author : so jae woo
+date   : 2019.08.30
 ---
-# machine learning toolkit 
-
-# usage
+### usage
 please see ref_code and test_code
 ---
 ### Todo
