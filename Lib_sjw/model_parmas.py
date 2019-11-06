@@ -8,7 +8,7 @@ def param_xgb( mode , num_class = 2 , use_gpu = False, random_num = 7):
     
     params_xgb['booster']      = 'gbtree'
     params_xgb['verbosity']    = 0
-
+    params_xgb['n_estimators'] = 100
     params_xgb['learning_rate']    = 0.02
     params_xgb['bagging_fraction'] = 0.8
     params_xgb['feature_fraction'] = 0.8

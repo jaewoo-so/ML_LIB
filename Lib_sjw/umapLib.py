@@ -103,4 +103,6 @@ def plotly_plot(xs , ys , n_class , cmap_name = 'viridis' , title = '' , filenam
 # plotly로 디스플레이 
 
 # 먼저 임베딩 하는코드 
-# 임베딩 결과를 뿌리는 코드 
+# 임베딩 결과를 뿌리는 코드
+# 메트릭별 설명도 있으면 좋을듯 
+
