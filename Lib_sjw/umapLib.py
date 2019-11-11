@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore")
 # metric
 dist_list = ['euclidean',
              'manhattan',
-             'cityblock',
+             #'cityblock',
              'braycurtis',
              'canberra',
              'chebyshev',
@@ -24,14 +24,14 @@ dist_list = ['euclidean',
              'jaccard',
              'kulsinski',
              'mahalanobis',
-             'matching',
+             #'matching',
              'minkowski',
              'rogerstanimoto',
              'russellrao',
              'seuclidean',
              'sokalmichener',
              'sokalsneath',
-             'sqeuclidean',
+             #'sqeuclidean',
              'yule',
              'wminkowski']
 n_neighbor_list = np.arange(4 , 24 , 4)
@@ -52,9 +52,16 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
 
     fig , ax = plt.subplots(1,1,figsize = figsize)
 
-    sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = ys , ax = ax)
+    #sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = ys , ax = ax)
+     # color 의 수는 class 수와 같게 맞춘다. 
+    color = sns.color_palette("colorblind", 6)
+    sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = y  , ax = ax , palette = color )
     plt.show()
     return embedding
+
+   
+
+
 
 def umap_combination_unsupervised( xs,ys, dist_list = dist_list , n_neighbor_list = n_neighbor_list, min_dist_list = min_dist_list , issupervised = False , figsize = (8,6)):
     for dist in dist_list:
@@ -70,12 +77,6 @@ def plotly_plot(xs , ys , n_class , cmap_name = 'viridis' , title = '' , filenam
 
     # color amp
     viridis_cmap = mlt.cm.get_cmap('viridis') 
-    
-     
-     
-     
-
-    
     norm = mlt.colors.Normalize(vmin=0, vmax=n_class) # 컬러맵의 구간을 나눔
     viridis_rgb = [ mlt.colors.colorConverter.to_rgb(viridis_cmap(norm(i))) for i in range(0, n_class) ] # 컬러맵을 RGB컬러로 변환
     viridis_rgb_dict = dict( zip( list(range(3)) , viridis_rgb ) )  # 각 컬러를 숫자로 키값 만듬
