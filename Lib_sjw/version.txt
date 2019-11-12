@@ -1,1 +1,2 @@
 2019-08-30 : regression , classification training-test 완료 
+2019-10 : 유틸 함수 추가 ( 미정리 ) 
