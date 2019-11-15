@@ -55,7 +55,7 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
     #sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = ys , ax = ax)
      # color 의 수는 class 수와 같게 맞춘다. 
     color = sns.color_palette("colorblind", 6)
-    sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = y  , ax = ax , palette = color )
+    sns.scatterplot(embedding[:,0] , embedding[:,1] , hue = ys  , ax = ax , palette = color )
     plt.show()
     return embedding
 

@@ -157,7 +157,7 @@ if __name__ == '__main__':
         print(ytrain.isna().any())
         print(ytest.isna().any())
         '''
-        #Test_Binary(xtrain , ytrain , xtest , 5,False)
+        Test_Binary(xtrain , ytrain , xtest , 5,False)
         Test_Binary_TestFold(X,y,2,2)
 
     def np_test():

@@ -2,6 +2,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.metrics import roc_curve, auc
+import pandas as pd
+from sklearn.metrics import accuracy_score , recall_score
+from sklearn import preprocessing
+from matplotlib import pyplot as plt
 
 #Boxplot
 def box_plot(df_res , save_path):
@@ -84,3 +88,75 @@ def roc_auc_binary_plot(y_test, y_score , title = None,save_path = None):
         plt.savefig(save_path)
     plt.show()
 
+
+# Todo : shap imp 에서 특정 피쳐만 빼고 플롯하기
+
+def tree_summary_abs_plot( shap_values , X , exclude_list=None):
+    '''
+    explainer = shap.TreeExplainer(res_best_model)
+    shap_values = explainer.shap_values(X)
+    '''
+    shap_abs = np.abs(shap_values)
+    shap_abs_sum = shap_abs.sum(axis = 0)
+    df_shap = pd.DataFrame(np.expand_dims(shap_abs_sum , 0) , columns = X.columns)
+   
+
+# ----------
+
+
+def ImpFunc(model):
+    t = model.coef_[0]
+    feature_importance = abs(model.coef_[0])
+    feature_importance = feature_importance / feature_importance.max()
+    sorted_idx = np.argsort(feature_importance)
+    imp =  feature_importance[sorted_idx]
+    return imp
+
+def ImpFunc_tree(model):
+    feature_importance = model.feature_importances_
+    feature_importance = feature_importance / feature_importance.max()
+    sorted_idx = np.argsort(feature_importance)
+    imp =  feature_importance[sorted_idx]
+    return imp
+
+def GetImportance(model, importance_func, xtrain, ytrain, xtest, ytest, xs_df):
+    '''
+    example
+    implist , score = GetImportance(model,ImpFunc_tree,x_train,y_train,x_test,y_test,xs_df)
+    PlotSaveImp(implist,'feature_importance_xg_v8.png','XGBoost : {:.2f}%'.format(score*100))
+    '''
+    model.fit(xtrain,ytrain)
+    pred = model.predict(xtest)
+    pred_round = pred.round()
+    result = recall_score(ytest, pred_round )
+    imp = importance_func(model)[2:]
+    cols = xs_df.columns.values[2:]
+    impdf = pd.DataFrame( {'colname' : cols , 'importance' : imp} )
+    sortedimp_all = impdf.sort_values(["importance"], ascending=[False])
+    sortedimp = sortedimp_all.iloc[:44,:]
+    return sortedimp , result
+
+def PlotSaveImp(df, path, title):
+    '''
+    example
+    implist , score = GetImportance(model,ImpFunc_tree,x_train,y_train,x_test,y_test,xs_df)
+    PlotSaveImp(implist,'feature_importance_xg_v8.png','XGBoost : {:.2f}%'.format(score*100))
+    '''
+    #plot 
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    #sns.set(style="whitegrid")
+    sns.set(style="whitegrid")
+
+    # Initialize the matplotlib figure
+    f, ax = plt.subplots(figsize=(6, 15))
+    sns.set_color_codes("pastel")
+    print(df.shape)
+    sns.barplot(x="importance" , y = 'colname', data=df, label="Importance", color="b")
+    ax.legend(ncol=2, loc="lower right", frameon=True)
+    ax.set(xlim=(0, df['importance'].max()*1.1), ylabel="Feature Name", xlabel="Feature Importance")
+    ax.set_title(" Feature Importance : XGBoost")
+    sns.despine(left=True, bottom=True)
+    #plt.figure(facecolor='w')
+    f.tight_layout()
+    plt.savefig(path)

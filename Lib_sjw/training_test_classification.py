@@ -73,7 +73,7 @@ def Test_Classification(xtrain , ytrain , xtest , nfold = 5 , verbose = False):
     for name in name_list:
         print(name)
         fold_predict , fold_oof , fold_metric , fold_model = tr.training_fixedTest('classification' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , 5  ) 
-        result_list[name] = [fold_predict , fold_oof , fold_metric]
+        result_list[name] = [fold_predict , fold_oof , fold_metric , fold_model]
     print('Test_Classification Complete')
     return result_list
 
