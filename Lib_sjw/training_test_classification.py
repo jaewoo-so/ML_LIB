@@ -1,3 +1,7 @@
+import sys
+sys.path.append(r'D:\00_work\ML_LIB')
+#sys.path.append(r'E:\01_PProj\ML_LIB')
+
 import Lib_sjw.training as tr
 import Lib_sjw.model_interface as mi
 import Lib_sjw.model_parmas as mp
@@ -72,7 +76,7 @@ def Test_Classification(xtrain , ytrain , xtest , nfold = 5 , verbose = False):
     # Training 
     for name in name_list:
         print(name)
-        fold_predict , fold_oof , fold_metric , fold_model = tr.training_fixedTest('classification' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , 5  ) 
+        fold_predict , fold_oof , fold_metric , fold_model = tr.training_fixedTest('classification' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , nfold  ) 
         result_list[name] = [fold_predict , fold_oof , fold_metric , fold_model]
     print('Test_Classification Complete')
     return result_list
@@ -137,7 +141,7 @@ if __name__ == '__main__':
     
     xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
     
-    Test_Classification(xtrain , ytrain , xtest , 5,False)
-    Test_Classification_TestFold(X,y,5,5)
+    Test_Classification(xtrain , ytrain , xtest , 2,False)
+    Test_Classification_TestFold(X,y,2,2)
 
     print('done')
