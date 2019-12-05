@@ -11,7 +11,7 @@ please see ref_code and test_code
 ---
 ### Todo
 - [ ] SVM Multi core 또는 gpu용으로 바꾸기 
-- [ ] auc 컷오프 알고리즘 추가 ( 4개 )
+- [X] auc 컷오프 알고리즘 추가 ( 4개 )
 - [ ] 주석 정리 
 - [ ] visual_result 쪽에 주석으로 입력 출력 포멧 명시
 - [ ] analysis , visual_result , todataframe , evaluator 쪽 정리 

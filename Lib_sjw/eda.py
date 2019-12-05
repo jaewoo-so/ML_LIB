@@ -9,6 +9,82 @@ from functools import *
 from pathlib import Path
 import seaborn as sns
 
+# -- helper
+def check_data_type(unique_number):
+    if unique_number == 2:
+        return 'binary'
+    elif unique_number < 50:
+        return 'category'
+    else:
+        return 'numeric'
+
+def first_look(df):
+    '''
+    'size':  ( 샘플 갯수 )
+    'count':( null값 뺀 샘플 갯수)
+    'nunique': (null 뺴고 유니크 값 카운팅)
+    '''
+
+
+    df_res = df.agg(['dtype' , 'size','count', 'nunique' , 'max' , 'min' ]).T
+    df_res['col_name'] = df_res.index
+    df_res = df_res[['col_name' , 'dtype' , 'size','count', 'nunique' , 'max' , 'min']]
+
+    df_res['null_count'] = df_res['size'] - df_res['count']
+    df_res['null_ratio'] =  df_res['null_count'] / df_res['size']
+    df_res['data_type'] = df_res['nunique'].apply(lambda x: check_data_type(x)) 
+    df_res= df_res.reset_index(drop=True)
+    return df_res
+
+def grouping_columns(df_res):
+    '''
+    get columns list of 3 catergory : 'binary' , 'category' , 'numeric'
+    input : Result of first_look , null_value_check
+    dataframe with column name : 'data_type' 
+    ''' 
+    res_dic = {}
+    df_group = df_res.groupby(by = 'data_type')
+    for k in df_group.groups.keys():
+        res_dic[k] = df_group.get_group(k)['col_name'].values.tolist()
+        #res_dic[k] = df_res.loc[df_res['data_type'] == k]['col_name'].values.tolist() # 같은 기능
+    return res_dic
+
+def null_value_check(df_src , is_save = False):
+    #eda.null_value_check(df_src)
+
+    #  null값이 있는 컬럼만 가져오기
+    null_cols = df_src.isna().sum(axis = 0).where(lambda x :  x > 0).dropna().index.tolist()
+    null_count = df_src.isna().sum(axis = 0).where(lambda x :  x > 0).dropna()
+
+    df_null = pd.DataFrame()
+    df_null['col_name'] = null_count.index
+    df_null['count'] = null_count.values
+    df_null['ratio%'] = df_null['count'] / df_src.shape[0] * 100
+
+    # null 값이 있는 컬럼에 대한 유니크 값 조사
+    df_include_null = df_src[null_cols]
+    df_include_null = df_include_null.agg(['dtype' ,  'nunique' , ]).T
+    df_include_null['col_name'] = df_include_null.index
+    df_include_null = df_include_null[['col_name' , 'dtype' , 'nunique' ]]
+    df_include_null['data_type'] = df_include_null['nunique'].apply(lambda x: check_data_type(x)) 
+
+    #df_res= df_res.reset_index(drop=True)
+    df_res_type = pd.merge(df_null , df_include_null , on = 'col_name' )
+
+    # plot null count
+    ax = null_count.plot(kind = 'barh' , figsize = (14,8))
+    x_offset = +0.04
+    y_offset = +0.02
+    for p in ax.patches:
+        b = p.get_bbox()
+        val = "{:.0f}".format(b.x1)  
+        ax.annotate(val, (b.x1 + x_offset, (b.y0 +b.y1)/2))
+    ax.set_title('Count Null Value ', fontsize = 24)
+    plt.tight_layout()
+    if is_save : plt.savefig('Count Null Value.png')
+
+    return df_res_type
+
 def check_unique_count(df_src , count):
     '''
     only full dataframe, and unique count 

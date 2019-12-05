@@ -31,9 +31,7 @@ def GetPR(Y_test,y_score,n_classes):
     print('Average precision score, micro-averaged over all classes: {0:0.4f}'.format(average_precision["micro"]))
     print('Average precision score, macro-averaged over all classes: {0:0.4f}'.format(average_precision["macro"]))
     return precision , recall , average_precision , thres
-
 #Binary
-
 
 
 ## method : visualize 
@@ -152,5 +150,15 @@ def prplot(precision , recall , average_precision, n_classes , class_names = Non
     
 
 
-    
+# --- 12월 new util 
+#ToDo
+'''
+1. precision recall 커브 그리기 
+2. threshold별 f1 스코어 커브 
+3. 
+
+
+
+'''
+
 
