@@ -55,8 +55,12 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
                         encoded_col_train_part = encoded_col_train_part + normal(loc=rmean, scale=rstd, 
                                                                                  size=(encoded_col_train_part.shape[0]))
                     # Saving estimated encodings for a fold
-                    parts.append(encoded_col_train_part) # 1개의 폴드에 대한 엔코딩값
-                encoded_col_train = pd.concat(parts, axis=0) # 모든 폴드에 대한 엔코딩 값
+                    parts.append(encoded_col_train_part)  # 1개의 폴드에 대한 엔코딩값
+                   
+
+                encoded_col_train = pd.concat(parts, axis=0)  # 모든 폴드에 대한 엔코딩 값
+                
+                
                 encoded_col_train.fillna(target_mean_global, inplace=True) # 빠진 값은 글로벌 평균으로 채워넣기 
             else:
                 encoded_col_train = train_data[col].map(target_means_cats_adj)
@@ -66,12 +70,13 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
 
             # Saving the column with means
             encoded_col = pd.concat([encoded_col_train, encoded_col_test], axis=0)
+           
             encoded_col[encoded_col.isnull()] = target_mean_global
             encoded_cols.append(  pd.DataFrame({col + '_' + 'mean_'+target_col : encoded_col})  ) # 리스트, 안쪽은 1컬럼짜리 시리즈
         all_encoded = pd.concat(encoded_cols, axis=1)
-
-        print()
-        return (all_encoded.loc[train_data.index, :], all_encoded.loc[test_data.index, :])
+        all_encoded = all_encoded.reset_index(drop = True)
+       
+        return (all_encoded.loc[ :train_data.shape[0]], all_encoded.loc[train_data.shape[0]:])
         
 
 from sklearn.datasets import load_iris
