@@ -1,4 +1,7 @@
-from Lib_CDSS import umapLib 
+import os
+os.chdir(os.path.dirname(__file__))
+
+from Lib_sjw import umapLib 
 import numpy as np
 
 xs = np.random.randint(0 , 10 , (100, 10 ))

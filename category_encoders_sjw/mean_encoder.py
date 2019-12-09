@@ -17,7 +17,7 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
         target_col = 'target'
         train_data = df_train.copy()
         train_data [target_col] = target
-        columns = self.feature_names.values
+        columns = self.feature_names
         encoded_cols = []
         #self.target_mean_global = train_data[target_col].mean()
         target_mean_global = train_data[target_col].mean()
