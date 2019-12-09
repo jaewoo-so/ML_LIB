@@ -69,6 +69,32 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
             encoded_col[encoded_col.isnull()] = target_mean_global
             encoded_cols.append(  pd.DataFrame({col + '_' + 'mean_'+target_col : encoded_col})  ) # 리스트, 안쪽은 1컬럼짜리 시리즈
         all_encoded = pd.concat(encoded_cols, axis=1)
-        return (all_encoded.loc[train_data.index,:], all_encoded.loc[test_data.index, :])
+
+        print()
+        return (all_encoded.loc[train_data.index, :], all_encoded.loc[test_data.index, :])
+        
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split , KFold
+if __name__ == '__main__':
+    data = load_iris()
+
+    x = data.data
+    y = data.target
+    cols = data.feature_names
+
+    df = pd.DataFrame(x, columns=cols)
+    df['sepal length (cm)'] = pd.qcut(df['sepal length (cm)'], 4 , [1,2,3,4])
+    df['sepal width (cm)'] = pd.qcut(df['sepal width (cm)'], 4, [0, 1, 2, 3])
+    xtrain, xtest, ytrain, ytest = train_test_split(df, y)
+
+    ee = MeanEncoder(['sepal length (cm)' , 'sepal width (cm)'])
+
+    a, b = ee.fit_transform(xtrain, xtest, ytrain)
+    
+    print(xtrain.shape, a.shape)
+    
+    print(xtest.shape , b.shape)
+
 
 
