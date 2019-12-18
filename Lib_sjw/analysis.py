@@ -187,7 +187,7 @@ def regression_aucpr(res , ytest , threshold):
         for nfold in pred_res:
             binary = np.where( ytest > threshold , 1 , 0 )
             pred_norm = MinMaxScaler().fit_transform(pred_res[nfold].reshape(-1,1)) 
-            print('{} : {:.4f}'.format(nfold,an.aucpr( binary , pred_norm)))
+            print('{} : {:.4f}'.format(nfold, aucpr( binary , pred_norm)))
         
 
 #endregion

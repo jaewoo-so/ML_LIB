@@ -15,3 +15,5 @@ Lib_sjw/__pycache__/ensemble.cpython-36.pyc
 Lib_sjw/__pycache__/analysis.cpython-36.pyc
 *.pyc
 *.tmp
+
+starter/
