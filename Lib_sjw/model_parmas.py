@@ -85,7 +85,7 @@ def param_cat(mode , use_gpu = False, is_unbalance = False, random_num = 7):
     params_cat['iterations']            = 2000
     params_cat['learning_rate']         = 0.02  
     params_cat['od_type']               =  'Iter'
-    params_cat['early_stopping_rounds'] = 12
+    #params_cat['early_stopping_rounds'] = 12
   
      # gpu , cpu
     if use_gpu:

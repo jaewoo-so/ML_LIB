@@ -29,7 +29,7 @@ def training_fixedTest_noVal( mode,
     starttime = time()
     if verbose:
         print('-'*100)
-        print('Training {}  Model : {}'.format( model_generator.__class__.__name__))
+        print('Training Model : {}'.format( model_generator.__class__.__name__))
   
     model = model_generator.make(model_params)
     model.fit(X,y , training_params)
