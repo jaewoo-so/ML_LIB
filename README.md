@@ -15,7 +15,7 @@ please see ref_code and test_code
 - [ ] 주석 정리 
 - [ ] visual_result 쪽에 주석으로 입력 출력 포멧 명시
 - [ ] analysis , visual_result , todataframe , evaluator 쪽 정리 
-- [ ] encoder쪽 함수 추가 
+- [X] encoder쪽 함수 추가 
 - 모델 추가
     - [ ] knn 계열 
 -  active learning 관련 기능 추가

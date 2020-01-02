@@ -139,6 +139,20 @@ def param_elst(mode , njobs = -1, random_num = 7):
     params_elst['random_state'] = random_num
     return params_elst
 
+def param_ridge(mode , njobs = -1, random_num = 7):
+    param_ridge = dict()
+    param_ridge['alpha'       ] = 1.0
+    param_ridge['normalize'   ] = True
+    param_ridge['random_state'] = random_num
+    return param_ridge
+
+def param_lasso(mode , njobs = -1, random_num = 7):
+    param_lasso = dict()
+    param_lasso['alpha'       ] = 0.7
+    param_lasso['normalize'    ] = True
+    param_lasso['random_state'] = random_num
+    return param_lasso
+
 from sklearn.gaussian_process.kernels import *
 def param_gpc(mode , njobs = -1 , random_num = 7):
     
@@ -180,3 +194,12 @@ def param_qda(priors = None):
     param_qda = dict()
     param_qda['priors'] = priors
     return param_qda
+
+def param_ANN(layers = (64  ,8) , optizmiers = 'adam' , lr = 0.001 , max_iter = 200 , random_num = 7):
+    param_ANN = dict()
+    param_ANN['hidden_layer_sizes'] = layers
+    param_ANN['solver'] = optizmiers
+    param_ANN['learning_rate_init'] = lr
+    param_ANN['max_iter'] = max_iter
+    param_ANN['random_state'] = random_num
+    return param_ANN

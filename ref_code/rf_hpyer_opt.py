@@ -19,6 +19,7 @@ golbal_regressor  = RandomForestRegressor
 golbal_classifier = RandomForestClassifier
 
 # mode = regression , classification
+# mode = regression , classification
 def get_max_f1_cutoff(model , xs_val , ys_val ):
     pred_train_val = model.predict_proba(xs_val)[:, 1]
     if np.isnan(pred_train_val).sum() > 0:
@@ -50,6 +51,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         if usef1:
             result = f1_score(ytest, pred , average = 'micro')
         else:
+            print('use accuracy')
             result = accuracy_score(ytest, pred)
 
     elif mode == 'binary':
@@ -60,9 +62,9 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         #evaluation
         result = None
         if usef1:
-            print('in')
             result = get_max_f1_cutoff(model, xtest, ytest)[-1]  # f1 value
         else:
+            print('use auc')
             result = roc_auc_score(ytest, model.predict_proba(xtest)[:, 1])  # auc value
         
     return result
@@ -82,7 +84,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
         
         if mode == 'regression':
             model = golbal_regressor(**params)
-            model.fit(xs,ys)
+            model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
 
             #evaluation
@@ -91,18 +93,19 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             
         elif mode == 'classification':
             model = golbal_classifier(**params)
-            model.fit(xs,ys)
+            model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
             #pred_round = pred.round()
             result = None
             if usef1:
                 result = f1_score(ytest, pred , average = 'micro')
             else:
+                print('use accuracy')
                 result = accuracy_score(ytest, pred)
                 
         elif mode == 'binary':
             model = golbal_classifier(**params)
-            model.fit(xs,ys)
+            model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
 
             #evaluation
@@ -110,6 +113,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             if usef1:
                 result = get_max_f1_cutoff(model, xtest, ytest)[-1]  # f1 value
             else:
+                print('use auc')
                 result = roc_auc_score(ytest, model.predict_proba(xtest)[:, 1])  # auc value
             
         allscore.append(result)
@@ -134,6 +138,7 @@ def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = No
         gc.collect()
         return cv_score
     return rf_eval
+    
     
 params = dict()
 params['n_jobs'] = -1
@@ -165,12 +170,12 @@ for k, v in df_list.items():
     clf_bo = BayesianOptimization(rf_eval, {'n_estimators': (2, 400),
                                           'max_depth': ( 2, 400),
                                             'max_features': (0.2, 1)})
-                                            
+
     clf_bo.maximize(init_points=1, n_iter=2)
     print(clf_bo.max)
     print('-' * 100)
     
-    xgb_eval = create_bysop_eval(params ,k ,X_train,y_train,5, use_f1 = True)
+    rf_eval = create_bysop_eval(params ,k ,X_train,y_train,5, use_f1 = True)
     clf_bo = BayesianOptimization(rf_eval, {'n_estimators': (2, 400),
                                           'max_depth': ( 2, 400),
                                             'max_features': (0.2, 1)})

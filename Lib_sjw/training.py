@@ -12,6 +12,7 @@ def training_regression():
 
 def training_binary():
     pass
+
 from lightgbm import LGBMClassifier , LGBMRegressor
 # todo : save model 기능 추가해야 한다.
 def training_fixedTest_noVal( mode, 
@@ -31,14 +32,14 @@ def training_fixedTest_noVal( mode,
         print('-'*100)
         print('Training Model : {}'.format( model_generator.__class__.__name__))
   
-    model = model_generator.make(model_params)
+    model = copy.deepcopy(model_generator).make(model_params)
     model.fit(X,y , training_params)
 
     # result 
     res_pred = model.predict_proba(X_test)
 
-        
-    print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
+    if verbose:    
+        print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
     #print('-'*100)
     return res_pred , model
 
@@ -51,9 +52,10 @@ def training_Testfold_noVal( mode,
                        test_nfold , nradom = 7 , verbose = False) :
 
     starttime = time()
-    print('-'*100)
-    print('-'*100)
-    print('** Test Fold {} on Model : {} **'.format( test_nfold , model_generator.__class__.__name__))
+    if verbose:
+        print('-'*100)
+        print('-'*100)
+        print('** Test Fold {} on Model : {} **'.format( test_nfold , model_generator.__class__.__name__))
 
     test_fold_index = OrderedDict()
 
@@ -68,9 +70,10 @@ def training_Testfold_noVal( mode,
 
     kfold = fold_splitter(mode , X , y , test_nfold , nradom)
 
-    for i , (train_index, test_index)  in enumerate(kfold.split(X,y)):
-        print()
-        print('* Test Fold {} *'.format(i))
+    for i, (train_index, test_index) in enumerate(kfold.split(X, y)):
+        if verbose:
+            print()
+            print('* Test Fold {} *'.format(i))
         if type(X) == pd.core.frame.DataFrame:
             xtrain, xtest = X.loc[train_index], X.loc[test_index]
             ytrain, ytest = y.loc[train_index], y.loc[test_index]
@@ -78,8 +81,9 @@ def training_Testfold_noVal( mode,
         else:
             xtrain, xtest = X[train_index], X[test_index]
             ytrain, ytest = y[train_index], y[test_index]
+            
 
-        # test_fold 인덱스 저장 
+        # test_fold 인덱스 저장 : 문제 없음
         test_fold_index['fold'+str(i)] = test_index
 
         # 폴드 실행
@@ -87,13 +91,16 @@ def training_Testfold_noVal( mode,
                                                                 model_params, 
                                                                 training_params, 
                                                                 metric_func, 
-                                                                xtrain, ytrain, xtest , verbose = verbose)
+                                                                xtrain, ytrain, xtest, verbose=verbose)
+        
+
+        # res_pred은 테스트 데이터에 대한 예측값이다.
         if mode == 'classification':
             oof[test_index , : ] = np.array(list(res_pred.values()))
         else:
             oof[test_index ] = res_pred
         
-        model_list['fold'+str(i)] = fold_model
+        model_list['fold'+str(i)] = copy.deepcopy(fold_model)
 
     return test_fold_index , oof, model_list
 
@@ -137,7 +144,7 @@ def training_fixedTest( mode,
             xtrain, xval = X[train_index], X[val_index]
             ytrain, yval = y[train_index], y[val_index]
 
-        model = model_generator.make(model_params)
+        model = copy.deepcopy(model_generator).make(model_params)
         model.fit(xtrain,ytrain,xval,yval , training_params) #이쪽에 문제가 있다. 
 
         # result 
@@ -157,8 +164,8 @@ def training_fixedTest( mode,
      
         model = None
         if verbose: print('{} Fold score : {:.4f}'.format(i , fold_metric['fold'+str(i)] ))
-            
-    print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
+    if verbose:        
+        print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
     #print('-'*100)
 
     return fold_predict , fold_oof , fold_metric , fold_model
@@ -200,9 +207,10 @@ def training_Testfold( mode,
     '''
 
     starttime = time()
-    print('-'*100)
-    print('-'*100)
-    print('** Test Fold {} on Model : {} **'.format( test_nfold , model_generator.__class__.__name__))
+    if verbose:
+        print('-'*100)
+        print('-'*100)
+        print('** Test Fold {} on Model : {} **'.format( test_nfold , model_generator.__class__.__name__))
 
     test_fold_index = OrderedDict()
 
@@ -217,9 +225,10 @@ def training_Testfold( mode,
 
     kfold = fold_splitter(mode , X , y , test_nfold , nradom)
 
-    for i , (train_index, test_index)  in enumerate(kfold.split(X,y)):
-        print()
-        print('* Test Fold {} *'.format( i ))        
+    for i, (train_index, test_index) in enumerate(kfold.split(X, y)):
+        if verbose:
+            print()
+            print('* Test Fold {} *'.format( i ))        
       
         if type(X) == pd.core.frame.DataFrame:
             xtrain, xtest = X.iloc[train_index], X.iloc[test_index]
