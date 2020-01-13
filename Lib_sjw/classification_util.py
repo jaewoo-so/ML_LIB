@@ -3,42 +3,48 @@ from sklearn.metrics import precision_recall_curve ,auc , roc_auc_score
 import numpy as np
 
 # metric function 을 여기에 정의한다. 
-def aucpr(y , pred ):
+def aucpr(class_values = None , y = None, pred =None):
     y_onehot = y.copy()
     pred_onehot = pred.copy()
-    if len(y.shape) == 1:
-        y_onehot = label_binarize(y , np.unique(y) )
-
-    if len(pred.shape) == 1:
-        pred_onehot = label_binarize(pred , np.unique(pred) )
+    if class_values != None: # 가끔식 클래스4개인데, 실제 샘플은 클래스 3 종류로만 이루어 졌을 경우가 있다. 
+        y_onehot = label_binarize(y, class_values)
+        pred_onehot = label_binarize(pred , class_values )
+    elif len(y.shape) == 1:
+        y_onehot = label_binarize(y, np.unique(y))
+        pred_onehot = label_binarize(pred , np.unique(y) )
     
     precision, recall, _ = precision_recall_curve(y_onehot.ravel(),pred_onehot.ravel()) # 평균까지 같이 내준다. 
     score_aucpr = auc(recall , precision) # recall is x axis , precision is y axis
     return score_aucpr
-
-def aucpr_multi(y , pred ):
+'''
+def aucpr_multi(class_values = None , y = None, pred =None):
     y_onehot = y.copy()
     pred_onehot = pred.copy()
-    if len(y.shape) == 1:
-        y_onehot = label_binarize(y , np.unique(y) )
-
-    if len(pred.shape) == 1:
-        pred_onehot = label_binarize(pred , np.unique(pred) )
+    if class_values != None:
+        y_onehot = label_binarize(y, class_values)
+        pred_onehot = label_binarize(pred , class_values )
+    elif len(y.shape) == 1:
+        y_onehot = label_binarize(y, np.unique(y))
+        pred_onehot = label_binarize(pred , np.unique(y) )
     
     precision, recall, _ = precision_recall_curve(y_onehot.ravel(),pred_onehot.ravel()) # 평균까지 같이 내준다. 
     score_aucpr = auc(recall , precision) # recall is x axis , precision is y axis
     return score_aucpr
-
-def auc_multi(y , pred ):
+'''
+def auc_multi(class_values = None , y = None, pred =None):
     y_onehot = y.copy()
     pred_onehot = pred.copy()
-    if len(y.shape) == 1:
-        y_onehot = label_binarize(y , np.unique(y) )
+ 
+    if class_values != None:
+        y_onehot = label_binarize(y, class_values)
+        
+     
+    elif len(y.shape) == 1:
+        y_onehot = label_binarize(y, np.unique(y))
+        
 
-    if len(pred.shape) == 1:
-        pred_onehot = label_binarize(pred , np.unique(pred) )
-    
-    auc = roc_auc_score(y_onehot.ravel(),pred_onehot.ravel()) # 평균까지 같이 내준다. 
+ 
+    auc = roc_auc_score(y_onehot.ravel(),pred.ravel()) # 평균까지 같이 내준다. 
     return auc
 
 

@@ -15,7 +15,7 @@ def training_blending_fixedTest(mode,
                         training_params, 
                         metric_func, 
                         X, y, X_test,
-                        nfold , nradom=7, verbose=False):
+                        blending_fold , nradom=7, verbose=False):
     '''
     def metric_func(y , predict_proba) -> obj
     return -> train_pred_new_feature, test_new_feature , fold_metric_score
@@ -30,7 +30,7 @@ def training_blending_fixedTest(mode,
     else:
         train_pred = np.zeros( (X.shape[0] ) , dtype = np.float)
 
-    kfold = fold_splitter(mode, X, y, nfold, nradom)
+    kfold = fold_splitter(mode, X, y, blending_fold, nradom)
     
     # result container
     
@@ -52,9 +52,7 @@ def training_blending_fixedTest(mode,
             train_pred[val_index , : ] = pred_on_val
         else:
             train_pred[val_index] = pred_on_val
-            
-        
-        test_pred = np.append(test_pred, model.predict_proba(X_test), axis=1)
+        test_pred = np.append(test_pred, model.predict_proba(X_test).reshape(-1,1), axis=1)
 
         # 폴드별 스코어
         fold_metric['fold' + str(i)] = metric_func( yval , train_pred[val_index])
@@ -70,7 +68,7 @@ def training_blending_Testfold_noVal( mode,
                        training_params, 
                        metric_func, 
                        X, y,  
-                       test_nfold , nradom = 7 , verbose = False) :
+                       test_nfold , blending_fold , nradom = 7 , verbose = False) :
 
     starttime = time()
     if verbose:
@@ -112,12 +110,12 @@ def training_blending_Testfold_noVal( mode,
                                                                 model_params, 
                                                                 training_params, 
                                                                 metric_func, 
-                                                                xtrain, ytrain, xtest, verbose=verbose)
-        
+                                                                xtrain, ytrain, xtest, blending_fold, verbose=verbose)
+   
         fold_train_pred['fold' + str(i)] = train_pred
         fold_test_pred['fold' + str(i)] = test_pred
+        mean_fold_score['fold' + str(i)] = np.array(list(fold_metric.values())).mean()
         
-        mean_fold_score['fold'+str(i)] = fold_metric.mean()
 
     return test_fold_index , fold_train_pred , fold_test_pred, mean_fold_score
 

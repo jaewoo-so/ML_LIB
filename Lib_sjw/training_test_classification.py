@@ -9,13 +9,16 @@ import Lib_sjw.evaluator as ev
 import Lib_sjw.classification_util as cu
 
 
-from sklearn.datasets import load_boston , load_iris , load_breast_cancer
+
 from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score
 from sklearn.model_selection import train_test_split
 import numpy as np
 
 from collections import OrderedDict
 
+
+
+from sklearn.datasets import load_boston , load_iris , load_breast_cancer
 
 '''
 1. 데이터 만들기
@@ -49,8 +52,8 @@ def Test_Classification(xtrain , ytrain , xtest , nfold = 5 , verbose = False):
     model_list['qda']  = mi.myQDAClassifier()
     
     param_list = OrderedDict()
-    param_list['xgb'] = mp.param_xgb('classification' , len(np.unique(y)), use_gpu= False)
-    param_list['lgb'] = mp.param_lgbm('classification' , len(np.unique(y)), use_gpu= False)
+    param_list['xgb'] = mp.param_xgb('classification' , len(np.unique(ytrain)), use_gpu= False)
+    param_list['lgb'] = mp.param_lgbm('classification' , len(np.unique(ytrain)), use_gpu= False)
     param_list['cat']  = mp.param_cat('classification' , use_gpu= True , is_unbalance= False )
     param_list['rfc']  = mp.param_rf('classification')
     param_list['svm']  = mp.param_svm('classification')

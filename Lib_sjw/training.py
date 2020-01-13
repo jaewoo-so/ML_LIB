@@ -158,7 +158,7 @@ def training_fixedTest( mode,
             fold_oof[val_index] = res_oof
 
         fold_predict['fold'+ str(i)] = res_pred
-        fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
+        fold_metric['fold' + str(i)] = metric_func( y = yval , pred = res_oof)
         fold_model['fold'  + str(i)] = copy.deepcopy(model)
         
      

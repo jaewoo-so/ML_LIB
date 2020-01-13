@@ -1,5 +1,5 @@
 import os
-os.chdir(oc.path.dirname(__file__))
+os.chdir(os.path.dirname(__file__))
 
 import Lib_sjw.training_blending as tr
 import Lib_sjw.model_interface as mi
@@ -23,7 +23,7 @@ import pandas as pd
 5. training_fixedTest 실행하기 
 6. 유틸에 테스트 데이터에 대한 성능평가, 또는 저장 등을 하기 
 '''
-def Test_blending_Binary(xtrain , ytrain , xtest  , nfold = 5 , verbose = False):
+def Test_blending_Binary(xtrain , ytrain , xtest  , blending_fold = 5 , verbose = False):
     # name list 
     name_list = ['xgb',
                  'lgb',
@@ -34,16 +34,16 @@ def Test_blending_Binary(xtrain , ytrain , xtest  , nfold = 5 , verbose = False)
                  'lda',
                  'qda']
     # model_list , param_list , 
-    model_list = OrderedDict()    
-    model_list = OrderedDict()    
-    model_list['xgb']  = mi.myXGBBinary()
-    model_list['lgb']  = mi.myLGBMBinary()
-    model_list['cat']  = mi.myCatBoostBinary()
-    model_list['rfc']  = mi.myRandomForestBinary()
-    model_list['svm']  = mi.mySVMBinary()
-    model_list['gpc']  = mi.myGPBinary()
-    model_list['lda']  = mi.myLDABinary()
-    model_list['qda']  = mi.myQDABinary()
+ 
+    model_dicts = OrderedDict()    
+    model_dicts['xgb']  = mi.myXGBBinary()
+    model_dicts['lgb']  = mi.myLGBMBinary()
+    model_dicts['cat']  = mi.myCatBoostBinary()
+    model_dicts['rfc']  = mi.myRandomForestBinary()
+    model_dicts['svm']  = mi.mySVMBinary()
+    model_dicts['gpc']  = mi.myGPBinary()
+    model_dicts['lda']  = mi.myLDABinary()
+    model_dicts['qda']  = mi.myQDABinary()
     
     param_list = OrderedDict ( )
     param_list['xgb'] = mp .param_xgb ('binary' , len(np.unique(ytrain)) , use_gpu= False )
@@ -73,12 +73,12 @@ def Test_blending_Binary(xtrain , ytrain , xtest  , nfold = 5 , verbose = False)
     # Training 
     for name in name_list:
         print(name)
-        train_pred , test_pred , fold_metric = tr.training_blending_fixedTest('binary' , model_list[name] , param_list[name] , fitpm_list[name] ,  
-                                                                                    metric_func , xtrain , ytrain , xtest , nfold , verbose ) 
+        train_pred , test_pred , fold_metric = tr.training_blending_fixedTest('binary' , model_dicts[name] , param_list[name] , fitpm_list[name] ,  
+                                                                                    metric_func , xtrain , ytrain , xtest , blending_fold , verbose ) 
         result_list[name] = [train_pred , test_pred , fold_metric ]
     return result_list
 
-def Test_blending_Binary_TestFold(X , y , nfold_test , nfold_val , verbose = True):
+def Test_blending_Binary_TestFold(X , y , nfold_test , blending_fold , verbose = True):
     # name list 
     name_list = ['xgb',
                  'lgb',
@@ -127,7 +127,7 @@ def Test_blending_Binary_TestFold(X , y , nfold_test , nfold_val , verbose = Tru
     for name in name_list:
         print(name)
         test_fold_index , fold_train_pred , fold_test_pred, mean_fold_score = tr.training_blending_Testfold_noVal('binary' , model_dict[name] , param_list[name] , fitpm_list[name] ,  metric_func , 
-                                                                     X , y , nfold_test , nfold_val , verbose ) 
+                                                                     X , y , nfold_test , blending_fold , verbose ) 
         result_list[name] = [test_fold_index , fold_train_pred , fold_test_pred, mean_fold_score]
         print('done')
     print('Test_Classification_TestFold Compelte')    
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         df = pd.DataFrame()
         xtrain , xtest , ytrain , ytest = train_test_split(X , y , test_size = 0.2 )
         Test_blending_Binary(xtrain , ytrain , xtest , 5,False)
-        Test_blending_Binary_TestFold(X, y, 5, 5)
+        Test_blending_Binary_TestFold(X, y, 3, 3)
         
 
     df_test()

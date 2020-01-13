@@ -13,7 +13,7 @@ import pandas as pd
 
 from collections import OrderedDict
 
-def Test_Regression_noVal(xtrain , xtest , ytrain ):
+def Test_Regression_noVal(xtrain , ytrain , xtest   ):
     # name list 
     name_list = ['xgb',
                  'lgb',
@@ -125,3 +125,6 @@ if __name__ == '__main__':
     
 
     print('done')
+
+    score_func = lambda ytrue, ypred: np.sqrt(mean_squared_error(ytrue, ypred))
+    

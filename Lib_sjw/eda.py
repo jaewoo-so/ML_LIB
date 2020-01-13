@@ -93,11 +93,14 @@ def check_unique_count(df_src , count):
     cols = df_src.columns
     under_10 = []
     under_10_names = []
+
+    unique_list = []
+
     print('------ Size ------')
     for col in cols:
         size = df_src[col].unique().size
         print('{:20s} : {:3}'.format(col , size))
-        
+        unique_list.append(size)
         if size <= count:
             under_10.append(size)
             under_10_names.append(col)
@@ -110,6 +113,12 @@ def check_unique_count(df_src , count):
     print('--- Size Under {} list ---'.format(count))
     print(under_10_names)
     print()
+
+    df_uni = pd.DataFrame()
+    df_uni['name'] = cols
+    df_uni['size'] = unique_list
+
+    return df_uni
 
 
 def plot_binary_value(df_src , col_binary):
