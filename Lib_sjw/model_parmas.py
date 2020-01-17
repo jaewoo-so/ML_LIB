@@ -54,7 +54,7 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     params_lgb['seed']=random_num
     params_lgb['bagging_seed']=random_num
     params_lgb['bagging_fraction'] = 0.8
-    params_lgb['bagging_fraction'] = 0.8
+    params_lgb['feature_fraction '] = 1.0
     params_lgb['feature_fraction_seed'] = random_num
     params_lgb['lambda_l1'] = 0.3
     params_lgb['lambda_l2'] = 0.4
