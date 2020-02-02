@@ -7,7 +7,6 @@ import gc
 from sklearn.metrics import accuracy_score , mean_squared_error , f1_score , average_precision_score , roc_auc_score , confusion_matrix , precision_recall_curve , roc_auc_score
 from sklearn.model_selection import StratifiedKFold , train_test_split , KFold
 
-from sklearn.ensemble import RandomForestClassifier , RandomForestRegressor
 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
@@ -15,6 +14,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+from sklearn.ensemble import RandomForestClassifier , RandomForestRegressor
 golbal_regressor  = RandomForestRegressor
 golbal_classifier = RandomForestClassifier
 

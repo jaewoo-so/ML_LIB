@@ -1,3 +1,10 @@
+import os
+os.chdir(os.path.dirname(__file__))
+import sys
+sys.path.append(r'E:\01_PProj\ML_LIB')
+sys.path.append(r'D:\00_work\ML_LIB')
+
+
 import Lib_sjw.training as tr
 import Lib_sjw.model_interface as mi
 import Lib_sjw.model_parmas as mp
