@@ -39,7 +39,7 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     '''
     멀티 클래스일 경우는 num_class 설정 해줘야 한다. 
     '''
-    params_lgb = {'colsample_bytree': 0.1, # feature_fraction 
+    params_lgb = {
         'max_depth': 15,
         'min_child_weight': 0.0,
         'min_data_in_leaf': 0,
@@ -54,10 +54,10 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     params_lgb['seed']=random_num
     params_lgb['bagging_seed']=random_num
     params_lgb['bagging_fraction'] = 0.8
-    params_lgb['feature_fraction '] = 1.0
+    params_lgb['feature_fraction'] = 0.9
     params_lgb['feature_fraction_seed'] = random_num
-    params_lgb['lambda_l1'] = 0.3
-    params_lgb['lambda_l2'] = 0.4
+    params_lgb['lambda_l1'] = 0
+    params_lgb['lambda_l2'] = 0
     params_lgb['verbose'] = 0
     
     # gpu , cpu

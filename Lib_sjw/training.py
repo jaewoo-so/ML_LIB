@@ -150,18 +150,24 @@ def training_fixedTest( mode,
         # result 
         res_oof = model.predict_proba(xval)
         res_pred = model.predict_proba(X_test)
-
+        
         #save
         if mode == 'classification': # 클래스의 갯수만큼 마지막 차원이 늘어난다. [ 0.9 , 0.01 , 0.99]
-            fold_oof[val_index,:] = res_oof
-        else:
-            fold_oof[val_index] = res_oof
-
-        fold_predict['fold'+ str(i)] = res_pred
-        fold_metric['fold' + str(i)] = metric_func( y = yval , pred = res_oof)
-        fold_model['fold'  + str(i)] = copy.deepcopy(model)
-        
-     
+            fold_oof[val_index, :] = res_oof
+            fold_predict['fold'+ str(i)] = res_pred
+            fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
+            fold_model['fold'  + str(i)] = copy.deepcopy(model)
+        else: # binary
+            if len(res_oof.shape) == 1:
+                fold_oof[val_index] = res_oof
+                fold_predict['fold' + str(i)] = res_pred
+                fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
+                fold_model['fold'  + str(i)] = copy.deepcopy(model)
+            elif len(res_oof.shape) == 2:
+                fold_oof[val_index] = res_oof[:, -1]
+                fold_predict['fold'+ str(i)] = res_pred[:,-1]
+                fold_metric['fold' + str(i)] = metric_func( yval , res_oof[:,-1])
+                fold_model['fold'  + str(i)] = copy.deepcopy(model)     
         model = None
         if verbose: print('{} Fold score : {:.4f}'.format(i , fold_metric['fold'+str(i)] ))
     if verbose:        

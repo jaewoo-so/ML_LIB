@@ -72,6 +72,7 @@ def Test_Classification(xtrain , ytrain , xtest , nfold = 5 , verbose = False):
     
     # metric func
     metric_func = cu.aucpr
+    #metric_func = partial(cu.auc_multi , [0,1,2,3])
     
     # Result
     result_list = OrderedDict()
@@ -125,7 +126,7 @@ def Test_Classification_TestFold(X , y , nfold_test , nfold_val , verbose = True
     
     # metric func
     metric_func = cu.aucpr
-    
+    #metric_func = partial(cu.auc_multi , [0,1,2,3])
     # Result
     result_list = OrderedDict()
     auc_score_list = OrderedDict()

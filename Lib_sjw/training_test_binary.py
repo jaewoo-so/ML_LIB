@@ -13,6 +13,28 @@ import numpy as np
 from collections import OrderedDict
 
 
+## metric_func = roc_auc_score 이외
+def cutoff_youdens_j(fpr,tpr,thresholds):
+    j_scores = tpr-fpr
+    j_ordered = sorted(zip(j_scores,thresholds))
+    return j_ordered[-1][1]
+
+def optimal_cutoff(y_val , pred):
+    fpr,tpr,thresholds = roc_curve(y_val , pred)
+    best_thres = cutoff_youdens_j(fpr,tpr,thresholds)
+    return best_thres
+
+def precision(y,ypred):
+    thres = optimal_cutoff(y,ypred)
+    ypred_binary = np.where( ypred > thres , 1 , 0 )
+    return precision_score(y , ypred_binary)
+
+def recall(y,ypred):
+    thres = optimal_cutoff(y,ypred)
+    ypred_binary = np.where( ypred > thres , 1 , 0 )
+    return recall_score(y , ypred_binary)
+
+
 '''
 1. 데이터 만들기
 2. 모델 제너레이터 만들기 

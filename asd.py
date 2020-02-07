@@ -1,0 +1,13 @@
+scipy_dist = ['braycurtis' ,
+'canberra' ,
+'chebyshev' ,
+'cityblock' ,
+'correlation' ,
+'cosine' ,
+'euclidean' ,
+'jensenshannon',
+'mahalanobis',
+'minkowski' ,
+'seuclidean' ,
+'sqeuclidean',
+'wminkowski' ]
