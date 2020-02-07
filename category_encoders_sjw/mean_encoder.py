@@ -102,7 +102,6 @@ if __name__ == '__main__':
     a, b = ee.fit_transform(xtrain, xtest, ytrain)
     
     print(xtrain.shape, a.shape)
-    
     print(xtest.shape , b.shape)
 
 

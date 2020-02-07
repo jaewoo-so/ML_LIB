@@ -1,7 +1,12 @@
+import sys
+sys.path.append('D:\01_mylib\ML_LIB')
+
+import os
+print(os.environ.get("PATH"))
+
 import os
 os.chdir(os.path.dirname(__file__))
-
-from Lib_sjw import umapLib 
+import umapLib 
 import numpy as np
 
 xs = np.random.randint(0 , 10 , (100, 10 ))
