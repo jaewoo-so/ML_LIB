@@ -5,17 +5,7 @@ def param_xgb( mode , num_class = 2 , use_gpu = False, random_num = 7):
     멀티 클래스일 경우는 num_class 설정 해줘야 한다. 
     '''
     params_xgb = dict()
-    
     params_xgb['booster']      = 'gbtree'
-    params_xgb['verbosity']    = 0
-    params_xgb['n_estimators'] = 100
-    params_xgb['learning_rate']    = 0.02
-    params_xgb['bagging_fraction'] = 0.8
-    params_xgb['feature_fraction'] = 0.8
-    params_xgb['lambda_l1']    = 0.3
-    params_xgb['lambda_l2']    = 0.4
-    params_xgb['max_depth']    = 9
- 
     # gpu , cpu
     if use_gpu:
         params_xgb['tree_method'] = 'gpu_hist'
@@ -39,26 +29,14 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     '''
     멀티 클래스일 경우는 num_class 설정 해줘야 한다. 
     '''
-    params_lgb = {
-        'max_depth': 15,
-        'min_child_weight': 0.0,
-        'min_data_in_leaf': 0,
-        'min_split_gain': 0.0,
-        'num_leaves': 100}
+    params_lgb = {}
 
     params_lgb['task'] = 'train'
     params_lgb['boosting_type'] = 'gbdt'
     params_lgb['is_unbalance'] = is_unbalance
-    params_lgb["learning_rate"] = 0.02
-    params_lgb["num_iterations"] = 2000
     params_lgb['seed']=random_num
     params_lgb['bagging_seed']=random_num
-    params_lgb['bagging_fraction'] = 0.8
-    params_lgb['feature_fraction'] = 0.9
     params_lgb['feature_fraction_seed'] = random_num
-    params_lgb['lambda_l1'] = 0
-    params_lgb['lambda_l2'] = 0
-    params_lgb['verbose'] = 0
     
     # gpu , cpu
     if use_gpu:
@@ -82,17 +60,11 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
 
 def param_cat(mode , use_gpu = False, is_unbalance = False, random_num = 7):
     params_cat = {}
-    params_cat['iterations']            = 2000
-    params_cat['learning_rate']         = 0.02  
-    params_cat['od_type']               =  'Iter'
-    #params_cat['early_stopping_rounds'] = 12
-  
      # gpu , cpu
     if use_gpu:
         params_cat['task_type'] = "GPU"
     else:
         params_cat['task_type'] = "CPU"
-
     # metric , objective
     # https://catboost.ai/docs/concepts/python-reference_parameters-list.html
     if mode == 'regression':
@@ -109,11 +81,7 @@ def param_cat(mode , use_gpu = False, is_unbalance = False, random_num = 7):
 
 def param_rf(mode , njobs = -1, random_num = 7):
     params_rf = dict()
-    params_rf['n_estimators'    ] = 80
-    params_rf['max_depth'       ] = 15
     params_rf['n_jobs'          ] = njobs
-    params_rf['min_samples_leaf'] = 1
-    params_rf['max_features'    ] = 'sqrt' # None
     params_rf['random_state'    ] = random_num
     return params_rf
 

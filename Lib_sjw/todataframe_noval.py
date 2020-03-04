@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score , accuracy_score , average_precision_score
 
+### ------ No Test Fold
 def result2df_rowmodel_colscore_noval(res_all, ytest , score_func):
     '''
     res_pred , model = tr.training_fixedTest_noVal
@@ -17,6 +18,10 @@ def result2df_rowmodel_colscore_noval(res_all, ytest , score_func):
     df_res['score'] = scores
     return df_res
 
+
+
+
+### ------ Test Fold
 def result2df_rowmodel_colfold_noval(res_all , ytest , score_func):
     '''
     res_all format : 

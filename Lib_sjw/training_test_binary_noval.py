@@ -128,7 +128,6 @@ def Test_Binary(xtrain , ytrain , xtest  , nfold = 5 , verbose = False):
         print(name)
         prediction ,  model = tr.training_fixedTest_noVal('binary' , model_dicts[name] , param_list[name] , fitpm_list[name] ,  
                                                                                     metric_func, xtrain, ytrain, xtest, verbose)
-        
         result_list[name] = [prediction  , model]
     return result_list
 

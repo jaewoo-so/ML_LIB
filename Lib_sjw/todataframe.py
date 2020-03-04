@@ -3,6 +3,7 @@ from collections import OrderedDict
 from sklearn.metrics import accuracy_score
 
 
+# 각 폴드의 validation에 대한 점수
 def result2df_rowmodel_colfold_oof(res_all , ytest , score_func):
     '''
     res_all format
@@ -21,6 +22,7 @@ def result2df_rowmodel_colfold_oof(res_all , ytest , score_func):
         result = result.append(score , ignore_index=True)
     return result
 
+# 각 폴드의 test에 대한 점수
 def result2df_rowmodel_colfold(res_all , ytest , score_func):
     '''
     res_all format
@@ -175,6 +177,7 @@ if __name__ == "__main__":
 
         res = ttb.Test_Binary(xtrain,ytrain,xtest)
         res2 = result2df_rowmodel_colfold_oof(res, ytrain, roc_auc_score)
+        res3 = result2df_rowmodel_colfold(res, ytest, roc_auc_score)
         print(res2)
         print('toy example done')
     toy_example()

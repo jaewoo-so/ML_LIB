@@ -161,8 +161,8 @@ def training_fixedTest( mode,
             if len(res_oof.shape) == 1:
                 fold_oof[val_index] = res_oof
                 fold_predict['fold' + str(i)] = res_pred
-                fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
-                fold_model['fold'  + str(i)] = copy.deepcopy(model)
+                fold_metric['fold' + str(i)]  = metric_func( yval , res_oof)
+                fold_model['fold'  + str(i)]  = copy.deepcopy(model)
             elif len(res_oof.shape) == 2:
                 fold_oof[val_index] = res_oof[:, -1]
                 fold_predict['fold'+ str(i)] = res_pred[:,-1]
