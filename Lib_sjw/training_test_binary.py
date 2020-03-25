@@ -6,7 +6,7 @@ import Lib_sjw.classification_util as cu
 
 
 from sklearn.datasets import load_boston , load_iris , load_breast_cancer
-from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score
+from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score , roc_curve
 from sklearn.model_selection import train_test_split
 import numpy as np
 

@@ -65,9 +65,11 @@ class myXGBBinary(myModel):
         return self.model.predict(xs) 
 
     def predict_proba(self, xs):
-       
-        return self.model.predict_proba(xs)[:,1]
+        if len(xs.shape) == 1:
 
+            return self.model.predict_proba(xs.reshape(1,-1))[:, 1]
+        else:
+            return self.model.predict_proba(xs)[:, 1]
 class myXGBRegressor(myModel):
     def make(self , make_params ):
         self.model = XGBRegressor(**make_params  )
@@ -245,7 +247,7 @@ class myRandomForestBinary(myModel):
         return self.model.predict(xs)
 
     def predict_proba(self , xs ):
-        return self.model.predict_proba(xs )[:,1]
+        return self.model.predict_proba(xs)
 
 class myRandomForestRegressor(myModel):
     def make(self , make_params ):

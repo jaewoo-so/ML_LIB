@@ -36,7 +36,10 @@ def training_fixedTest_noVal( mode,
     model.fit(X,y , training_params)
 
     # result 
-    res_pred = model.predict_proba(X_test)
+    if X_test.shape[1] == 1:
+        res_pred = model.predict_proba(X_test.T)
+    else:
+        res_pred = model.predict_proba(X_test)
 
     if verbose:    
         print('Total Training Time : {}  [h:m:s]'.format(str(datetime.timedelta(seconds=(time() - starttime)))))
@@ -70,37 +73,76 @@ def training_Testfold_noVal( mode,
 
     kfold = fold_splitter(mode , X , y , test_nfold , nradom)
 
-    for i, (train_index, test_index) in enumerate(kfold.split(X, y)):
-        if verbose:
-            print()
-            print('* Test Fold {} *'.format(i))
-        if type(X) == pd.core.frame.DataFrame:
-            xtrain, xtest = X.loc[train_index], X.loc[test_index]
-            ytrain, ytest = y.loc[train_index], y.loc[test_index]
+    if test_nfold < X.shape[0]:
+    
+        for i, (train_index, test_index) in enumerate(kfold.split(X, y)):
+            if verbose:
+                print()
+                print('* Test Fold {} *'.format(i))
+            if type(X) == pd.core.frame.DataFrame:
+                xtrain, xtest = X.loc[train_index], X.loc[test_index]
+                ytrain, ytest = y.loc[train_index], y.loc[test_index]
+                
+            else:
+                xtrain, xtest = X[train_index], X[test_index]
+                ytrain, ytest = y[train_index], y[test_index]
+                
+    
+            # test_fold 인덱스 저장 : 문제 없음
+            test_fold_index['fold'+str(i)] = test_index
+    
+            # 폴드 실행
+            res_pred , fold_model = training_fixedTest_noVal(mode, model_generator, 
+                                                                    model_params, 
+                                                                    training_params, 
+                                                                    metric_func, 
+                                                                    xtrain, ytrain, xtest, verbose=verbose)
             
-        else:
-            xtrain, xtest = X[train_index], X[test_index]
-            ytrain, ytest = y[train_index], y[test_index]
+    
+            # res_pred은 테스트 데이터에 대한 예측값이다.
+            if mode == 'classification':
+                oof[test_index , : ] = np.array(list(res_pred.values()))
+            else:
+                if len(res_pred.shape) == 1:
+                    oof[test_index] = res_pred
+                else:
+                    oof[test_index] = res_pred[:,1]
             
-
-        # test_fold 인덱스 저장 : 문제 없음
-        test_fold_index['fold'+str(i)] = test_index
-
-        # 폴드 실행
-        res_pred , fold_model = training_fixedTest_noVal(mode, model_generator, 
-                                                                model_params, 
-                                                                training_params, 
-                                                                metric_func, 
-                                                                xtrain, ytrain, xtest, verbose=verbose)
+            model_list['fold' + str(i)] = copy.deepcopy(fold_model)
+            
+    else:
+        for i in range(test_nfold):
+            if verbose:
+                print()
+                print('* Test Fold {} *'.format(i))
+            if type(X) == pd.core.frame.DataFrame:
+                xtrain, xtest = X.drop([i],axis= 0), X.loc[i].to_frame()
+                ytrain, ytest = y.drop([i],axis= 0), y.loc[i:i]
+               
+            else:
+                mask = [True]*X.shape[0]
+                mask[i] = False
+                xtrain, xtest = X[mask], X[i]
+                ytrain, ytest = y[mask], y[i]
         
-
-        # res_pred은 테스트 데이터에 대한 예측값이다.
-        if mode == 'classification':
-            oof[test_index , : ] = np.array(list(res_pred.values()))
-        else:
-            oof[test_index ] = res_pred
+            test_index = i
+            # test_fold 인덱스 저장 : 문제 없음
+            test_fold_index['fold'+str(i)] = test_index
         
-        model_list['fold'+str(i)] = copy.deepcopy(fold_model)
+            # 폴드 실행
+            res_pred , fold_model = training_fixedTest_noVal(mode, model_generator, 
+                                                                        model_params, 
+                                                                        training_params, 
+                                                                        metric_func, 
+                                                                        xtrain, ytrain, xtest, verbose=verbose)
+            
+            # res_pred은 테스트 데이터에 대한 예측값이다.
+            if mode == 'classification':
+                oof[test_index , : ] = np.array(list(res_pred.values()))
+            else:
+                oof[test_index ] = res_pred
+
+            model_list['fold'+str(i)] = copy.deepcopy(fold_model)
 
     return test_fold_index , oof, model_list
 
@@ -296,7 +338,7 @@ E:\01_PProj\ML_LIB\Lib_sjw\training.py in training_fixedTest(mode, model_generat
     152         fold_predict['fold'+str(i)] = res_pred
 
 ValueError: shape mismatch: value array of shape (2418,) could not be broadcast to indexing result of shape (2418,1)
-y의 모양이 (100,) 이 아닌 (100,1) 일 경우 발생. flatten쓰면 된다. 
+y의 모양이 (100,) 이 아닌 (100,1) 일 경우 발생. flatten()쓰면 된다. 
 '''
 
 # metric binary
