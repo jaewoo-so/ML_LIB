@@ -36,7 +36,7 @@ def training_fixedTest_noVal( mode,
     model.fit(X,y , training_params)
 
     # result 
-    if X_test.shape[1] == 1:
+    if (len(X_test.shape) == 1) or (X_test.shape[-1] == 1): # numpy 
         res_pred = model.predict_proba(X_test.T)
     else:
         res_pred = model.predict_proba(X_test)
@@ -140,7 +140,10 @@ def training_Testfold_noVal( mode,
             if mode == 'classification':
                 oof[test_index , : ] = np.array(list(res_pred.values()))
             else:
-                oof[test_index ] = res_pred
+                if len(res_pred.shape) == 1:
+                    oof[test_index] = res_pred
+                else:
+                    oof[test_index] = res_pred[0][1]
 
             model_list['fold'+str(i)] = copy.deepcopy(fold_model)
 

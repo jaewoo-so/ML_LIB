@@ -18,8 +18,8 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 import lightgbm as lgb
-golbal_regressor  = lgb.LGBMRegressor
-golbal_classifier = lgb.LGBMClassifier
+global_regressor  = lgb.LGBMRegressor
+global_classifier = lgb.LGBMClassifier
 
 # mode = regression , classification
 def get_max_f1_cutoff(model , xs_val , ys_val ):
@@ -39,7 +39,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'regression'
         params['metric'] = 'l2'
 
-        model = golbal_regressor(**params)
+        model = global_regressor(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -51,7 +51,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['metric'] = 'multiclass'
         params['num_class'] = len(np.unique(ys))
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -66,7 +66,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'binary'
         params['metric'] = 'auc'
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -96,7 +96,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['objective'] = 'regression' # 트레이닝에 사용
             params['metric'] = 'l2' # eval_set에 사용
 
-            model = golbal_regressor(**params)
+            model = global_regressor(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 
@@ -109,7 +109,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['metric'] = 'multiclass'
             params['num_class'] = len(np.unique(ys))
 
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
             #pred_round = pred.round()
@@ -123,7 +123,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['objective'] = 'binary'
             params['metric'] = 'auc'
 
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 
@@ -140,7 +140,8 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
 
 
 def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = None, n_split = 5 , use_f1 = False):
-    def lgbm_eval(num_leaves,
+    def lgbm_eval(num_iterations,
+                  num_leaves,
                   colsample_bytree,
                   subsample,
                   max_depth,
@@ -155,6 +156,7 @@ def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = No
                   bagging_fraction,
                   feature_fraction
                   ):
+        params["num_iterations"] = int(num_iterations)          
         params["num_leaves"] = int(num_leaves)
         params['colsample_bytree'] = max(min(colsample_bytree, 1), 0)
         params['subsample'] = max(min(subsample, 1), 0)
@@ -223,7 +225,8 @@ for k, v in df_list.items():
     y_test = y_test.flatten()
 
     lgb_eval = create_bysop_eval(params ,k,X_train,y_train,X_test,y_test,5, use_f1 = True)
-    clf_bo = BayesianOptimization(lgb_eval, {'num_leaves': (42, 5000),
+    clf_bo = BayesianOptimization(lgb_eval, {'num_iterations' : (2, 1000),
+                                            'num_leaves': (42, 5000),
                                             'colsample_bytree': (0.001, 1),
                                             'subsample': (0.001, 1),
                                             'max_depth': (4, 15),
@@ -242,7 +245,8 @@ for k, v in df_list.items():
     print('-' * 100)
     
     lgb_eval = create_bysop_eval(params ,k ,X_train,y_train,5, use_f1 = True)
-    clf_bo = BayesianOptimization(lgb_eval, {'num_leaves': (42, 5000),
+    clf_bo = BayesianOptimization(lgb_eval, {'num_iterations' : ( 2 , 1000 ),
+                                             'num_leaves': (42, 5000),
                                             'colsample_bytree': (0.001, 1),
                                             'subsample': (0.001, 1),
                                             'max_depth': (4, 15),
@@ -251,13 +255,41 @@ for k, v in df_list.items():
                                             'min_split_gain': (0, 1),
                                             'min_child_weight': (0, 45),
                                             'min_data_in_leaf': (0, 100),
-                                           'lambda_l1': (0, 10),
-                                           'lambda_l2': (0, 10),
-                                           'learning_rate' : (0.6,0.001),
+                                            'lambda_l1': (0, 10),
+                                            'lambda_l2': (0, 10),
+                                            'learning_rate' : (0.6,0.001),
                                             'bagging_fraction' : (0.1,1.0),
                                             'feature_fraction' : (0.1,1.0)})
     clf_bo.maximize(init_points=1, n_iter=2)
     print(clf_bo.max)
     print('-' * 100)
 print('all pass')
-print('time : {}'.format(time()-starttime ))
+print('time : {}'.format(time() - starttime))
+
+
+
+param_best = {'bagging_fraction': 0.21176541753913136,
+ 'colsample_bytree': 0.7140942216454612,
+ 'feature_fraction': 0.11946795064183889,
+ 'lambda_l1': 2.310135421593227,
+ 'lambda_l2': 7.468019368264845,
+ 'learning_rate': 0.22728585822684572,
+ 'max_depth': 9.240811767549072,
+ 'min_child_weight': 12.221204534872191,
+ 'min_data_in_leaf': 7.0330947275715765,
+ 'min_split_gain': 0.4964603965643156,
+ 'num_leaves': 4229.636789209139,
+ 'reg_alpha': 0.786784124586184,
+ 'reg_lambda': 7.287151182953648,
+ 'subsample': 0.024418195680870523}
+param_best = clf_bo.max['params']
+param_best['num_leaves'] = int(param_best['num_leaves'])
+param_best['max_depth'] = int(param_best['max_depth'])
+param_best['min_data_in_leaf'] = int(param_best['min_data_in_leaf'])
+param_best['task'] = 'train'
+param_best['device'] = 'cpu'
+param_best['boosting'] = 'gbdt'
+param_best['seed']=326
+param_best['bagging_seed']=326
+param_best['objective'] = 'regression' # 트레이닝에 사용
+#param_best['metric'] = 'multi_logloss' # eval_set에 사용 

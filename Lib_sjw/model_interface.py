@@ -47,8 +47,11 @@ class myXGBClassifier(myModel):
     def predict(self , xs ):
         return self.model.predict(xs) 
 
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class myXGBBinary(myModel):
     def make(self , make_params ):
@@ -66,7 +69,6 @@ class myXGBBinary(myModel):
 
     def predict_proba(self, xs):
         if len(xs.shape) == 1:
-
             return self.model.predict_proba(xs.reshape(1,-1))[:, 1]
         else:
             return self.model.predict_proba(xs)[:, 1]
@@ -84,8 +86,11 @@ class myXGBRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 
 #lightgbm
@@ -114,8 +119,10 @@ class myLGBMClassifier:
         
     def predict_proba(self , xs ):
         #return self.model.predict_proba(xs)[:,1] # sklearn version
-        return self.model.predict(xs)
-
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.rehspae(1,-1))
+        else:
+            return self.model.predict(xs)
 class myLGBMBinary:
     def make(self , params ):
         self.params = params
@@ -134,7 +141,10 @@ class myLGBMBinary:
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
         
     def predict_proba(self, xs):
-        return self.model.predict(xs)
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myLGBMRegressor:
     def make(self , params ):
@@ -159,8 +169,11 @@ class myLGBMRegressor:
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
         
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
     
 #catboost
 '''
@@ -181,8 +194,11 @@ class myCatBoostClassifier:
     def predict(self , xs ):
         return self.model.predict(xs) 
         
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class myCatBoostBinary:
     def make(self , params ):
@@ -198,8 +214,11 @@ class myCatBoostBinary:
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
         
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)[:,1]
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)[:,1]
 
 class myCatBoostRegressor:
     def make(self , params ):
@@ -215,8 +234,135 @@ class myCatBoostRegressor:
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
         
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
+
+
+from catboost import CatBoostClassifier , CatBoostRegressor
+class myCatBoostClassifier:
+    def make(self , params  ):
+        self.model =  CatBoostClassifier(**params  )
+        return self
+
+    def fit(self ,  xtrain , ytrain , xtest =None, ytest =None , fit_params = {}):
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , verbose = False , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , eval_set=[(xtest,ytest)] , verbose = False ,**fit_params )
+        
+    def predict(self , xs ):
+        return self.model.predict(xs) 
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
+
+class myCatBoostBinary:
+    def make(self , params ):
+        self.model =  CatBoostClassifier(**params  )
+        return self
+
+    def fit(self ,  xtrain , ytrain , xtest =None, ytest =None , fit_params = {}):
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , verbose = False , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , eval_set=[(xtest,ytest)] , verbose = False ,**fit_params )
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)[:,1]
+
+#Ngboost
+from ngboost import NGBClassifier, NGBRegressor
+class myNGBoostRegressor:
+    def make(self , params ):
+        self.model =  NGBRegressor(**params  )
+        return self
+
+    def fit(self, xtrain, ytrain, xtest=None, ytest=None, fit_params={}):
+        if type(xtrain) == pd.core.frame.DataFrame:
+                xtrain = xtrain.values
+                ytrain = ytrain.values
+                if type(xtest) != type(None) and type(ytest) != type(None):
+                    xtest = xtest.values
+                    ytest = ytest.values
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , X_val = xtest , Y_val = ytest , **fit_params )
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
+
+
+class myNGBoostClassifier:
+    def make(self , params  ):
+        self.model =  NGBClassifier(**params  )
+        return self
+
+    def fit(self, xtrain, ytrain, xtest=None, ytest=None, fit_params={}):
+        if type(xtrain) == pd.core.frame.DataFrame:
+                xtrain = xtrain.values
+                ytrain = ytrain.values
+                if type(xtest) != type(None) and type(ytest) != type(None):
+                    xtest = xtest.values
+                    ytest = ytest.values
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , X_val = xtest , Y_val = ytest ,**fit_params )
+        
+    def predict(self , xs ):
+        return self.model.predict(xs) 
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
+
+class myNGBoostBinary:
+    def make(self , params ):
+        self.model =  NGBRegressor(**params  )
+        return self
+
+    def fit(self, xtrain, ytrain, xtest=None, ytest=None, fit_params={}):
+        if type(xtrain) == pd.core.frame.DataFrame:
+                xtrain = xtrain.values
+                ytrain = ytrain.values
+                if type(xtest) != type(None) and type(ytest) != type(None):
+                    xtest = xtest.values
+                    ytest = ytest.values
+                  
+        if type(xtest) == type(None) or type(ytest) == type(None) :
+            self.model.fit( xtrain , ytrain , **fit_params )
+        else:
+            self.model.fit( xtrain , ytrain , X_val = xtest , Y_val = ytest ,**fit_params )
+        
+    def predict(self , xs , threshold = 0.5):
+        return np.where(self.model.predict(xs) > threshold , 1 , 0)
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)[:,1]
 
         
 #random forest 
@@ -231,9 +377,12 @@ class myRandomForestClassifier(myModel):
         
     def predict(self , xs ):
         return self.model.predict(xs)
-
-    def predict_proba(self , xtrain ):
-        return self.model.predict_proba(xtrain )
+        
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class myRandomForestBinary(myModel):
     def make(self , make_params  ):
@@ -246,8 +395,11 @@ class myRandomForestBinary(myModel):
     def predict(self , xs ):
         return self.model.predict(xs)
 
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class myRandomForestRegressor(myModel):
     def make(self , make_params ):
@@ -260,8 +412,11 @@ class myRandomForestRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 #svm
 from sklearn.svm import SVC , SVR
@@ -276,8 +431,11 @@ class mySVMClassifier(myModel):
     def predict(self , xs ):
         return self.model.predict(xs)
 
-    def predict_proba(self , xtrain ):
-        return self.model.predict_proba(xtrain)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
         
 class mySVMBinary(myModel):
     def make(self , make_params  ):
@@ -290,8 +448,11 @@ class mySVMBinary(myModel):
     def predict(self , xs ):
         return self.model.predict(xs)
 
-    def predict_proba(self , xtrain ):
-        return self.model.predict_proba(xtrain )[:,1]
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class mySVMRegressor(myModel):
     def make(self , make_params  ):
@@ -304,8 +465,11 @@ class mySVMRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 # linear
 from sklearn.linear_model import LinearRegression , LogisticRegression
@@ -320,8 +484,11 @@ class myLinearRegressionBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myLinearRegressionRegressor(myModel):
     def make(self , make_params ):
@@ -334,8 +501,11 @@ class myLinearRegressionRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 from sklearn.linear_model import Ridge , RidgeClassifier
 class myRidgeBinary(myModel):
@@ -349,8 +519,11 @@ class myRidgeBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myRidgeRegressor(myModel):
     def make(self , make_params ):
@@ -363,8 +536,11 @@ class myRidgeRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 
 
@@ -383,8 +559,11 @@ class myElasticNetBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myElasticNetRegressor(myModel):
     def make(self , make_params ):
@@ -397,8 +576,11 @@ class myElasticNetRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 #Ridge
 from sklearn.linear_model import Ridge
@@ -413,8 +595,11 @@ class myRidgeBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myRidgeRegressor(myModel):
     def make(self , make_params ):
@@ -427,8 +612,11 @@ class myRidgeRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 #Lasso
 from sklearn.linear_model import Lasso
@@ -443,8 +631,11 @@ class myLassoBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 class myLassoRegressor(myModel):
     def make(self , make_params ):
@@ -457,8 +648,11 @@ class myLassoRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 
 
@@ -475,8 +669,11 @@ class myGPClassifier(myModel):
     def predict(self , xs , threshold = 0.5):
         return self.model.predict
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
 
 class myGPBinary(myModel):
     def make(self , make_params  ):
@@ -489,8 +686,11 @@ class myGPBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return self.model.predict
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)[:,1]
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)[:,1]
 
 class myGPRegressor(myModel):
     def make(self , make_params ):
@@ -503,8 +703,11 @@ class myGPRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            return self.model.predict(xs)
 
 
 #ANN
@@ -520,8 +723,12 @@ class myANNClassifier(myModel):
     def predict(self , xs , threshold = 0.5):
         return self.model.predict
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            return self.model.predict_proba(xs)
+
 
 class myANNBinary(myModel):
     def make(self , make_params):
@@ -534,8 +741,14 @@ class myANNBinary(myModel):
     def predict(self , xs , threshold = 0.5):
         return self.model.predict
                     
-    def predict_proba(self , xs ):
-        return self.model.predict_proba(xs)[:,1]
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict_proba(xs.reshape(1,-1))
+        else:
+            if len(xs.shape) == 1:
+                return self.model.predict_proba(xs.reshape(1,-1))
+            else:
+                return self.model.predict_proba(xs)
 
 class myANNRegressor(myModel):
     def make(self , make_params ):
@@ -548,10 +761,14 @@ class myANNRegressor(myModel):
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)
                     
-    def predict_proba(self , xs ):
-        return self.model.predict(xs)
-
-
+    def predict_proba(self, xs):
+        if len(xs.shape) == 1:
+            return self.model.predict(xs.reshape(1,-1))
+        else:
+            if len(xs.shape) == 1:
+                return self.model.predict(xs.reshape(1,-1))
+            else:
+                return self.model.predict(xs)
 
 
 ## classifier 
@@ -580,7 +797,10 @@ class myLDAClassifier(myModel):
         if type(xs) == pd.core.frame.DataFrame:
             return self.model.predict_proba(xs.astype('float32'))
         else:
-            return self.model.predict_proba(xs)
+            if len(xs.shape) == 1:
+                return self.model.predict_proba(xs.reshape(1,-1))
+            else:
+                return self.model.predict_proba(xs)
 
 class myLDABinary(myModel):
     def make(self , make_params ):
@@ -603,7 +823,10 @@ class myLDABinary(myModel):
         if type(xs) == pd.core.frame.DataFrame:
             return self.model.predict_proba(xs.astype('float32'))[:,1]
         else:
-            return self.model.predict_proba(xs)[:,1]
+            if len(xs.shape) == 1:
+                return self.model.predict_proba(xs.reshape(1,-1))
+            else:
+                return self.model.predict_proba(xs)
 
 #QDA
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
@@ -630,7 +853,10 @@ class myQDAClassifier(myModel):
         if type(xs) == pd.core.frame.DataFrame:
             return self.model.predict_proba(xs.astype('float32'))
         else:
-            return self.model.predict_proba(xs)
+            if len(xs.shape) == 1:
+                return self.model.predict_proba(xs.reshape(1,-1))
+            else:
+                return self.model.predict_proba(xs)
 
 class myQDABinary(myModel):
     def make(self , make_params ):
@@ -653,5 +879,8 @@ class myQDABinary(myModel):
         if type(xs) == pd.core.frame.DataFrame:
             return self.model.predict_proba(xs.astype('float32'))[:,1]
         else:
-            return self.model.predict_proba(xs)[:,1]
+            if len(xs.shape) == 1:
+                return self.model.predict_proba(xs.reshape(1,-1))
+            else:
+                return self.model.predict_proba(xs)
 

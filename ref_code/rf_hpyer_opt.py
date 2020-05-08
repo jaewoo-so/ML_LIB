@@ -15,8 +15,8 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 from sklearn.ensemble import RandomForestClassifier , RandomForestRegressor
-golbal_regressor  = RandomForestRegressor
-golbal_classifier = RandomForestClassifier
+global_regressor  = RandomForestRegressor
+global_classifier = RandomForestClassifier
 
 # mode = regression , classification
 # mode = regression , classification
@@ -34,7 +34,7 @@ def get_max_f1_cutoff(model , xs_val , ys_val ):
 
 def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = False):
     if mode == 'regression':
-        model = golbal_regressor(**params)
+        model = global_regressor(**params)
         model.fit(xs,ys)
         pred = model.predict(xtest)
 
@@ -42,7 +42,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         result = -1 * mean_squared_error(ytest, pred)
 
     elif mode == 'classification':
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys)
         pred = model.predict(xtest)
 
@@ -55,7 +55,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
             result = accuracy_score(ytest, pred)
 
     elif mode == 'binary':
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys)
         pred = model.predict(xtest)
 
@@ -83,7 +83,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
         ytrain, ytest = ys[train_index], ys[val_index]
         
         if mode == 'regression':
-            model = golbal_regressor(**params)
+            model = global_regressor(**params)
             model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
 
@@ -92,7 +92,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             
             
         elif mode == 'classification':
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
             #pred_round = pred.round()
@@ -104,7 +104,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
                 result = accuracy_score(ytest, pred)
                 
         elif mode == 'binary':
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain)
             pred = model.predict(xtest)
 

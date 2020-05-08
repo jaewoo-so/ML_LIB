@@ -14,8 +14,8 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 from time import time
 import xgboost as xgb
-golbal_regressor  = xgb.XGBRegressor
-golbal_classifier = xgb.XGBClassifier
+global_regressor  = xgb.XGBRegressor
+global_classifier = xgb.XGBClassifier
 
 # mode = regression , classification
 def get_max_f1_cutoff(model , xs_val , ys_val ):
@@ -35,7 +35,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'reg:squarederror'
         params['eval_metric'] = 'rmse'
 
-        model = golbal_regressor(**params)
+        model = global_regressor(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -47,7 +47,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['eval_metric'] = 'mlogloss'
         params['num_class'] = len(np.unique(ys))
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -62,7 +62,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'reg:logistic'
         params['eval_metric'] = 'error'
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -93,7 +93,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['eval_metric'] = 'rmse'
 
 
-            model = golbal_regressor(**params)
+            model = global_regressor(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 
@@ -106,7 +106,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['eval_metric'] = 'mlogloss'
             params['num_class'] = len(np.unique(ys))
             
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
             #pred_round = pred.round()
@@ -120,7 +120,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['objective'] = 'reg:logistic'
             params['eval_metric'] = 'error'
 
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 
@@ -172,7 +172,7 @@ params['tree_method'] = 'gpu_hist'
 #params['tree_method'] = 'hist'
 params['booster'] = 'gbtree' 
 #params['booster'] = 'gblinear' 
-params['objective'] = 'reg:logistic'
+params['objective'] = 'reg:logistic' ### 변경 요망 
 #params['objective'] = 'reg:squarederror' # nan 오류난다. 
 params['eval_metric'] = 'error'
 params['feature_fraction'] = 1.0
@@ -232,4 +232,50 @@ for k, v in df_list.items():
     print(clf_bo.max)
     print('-' * 100)
 print('all pass')
-print('time : {}'.format(time()-starttime ))
+print('time : {}'.format(time() - starttime))
+
+
+param_best = clf_bo.max['params']
+#param_best ={'colsample_bytree': 0.3818480846747036,
+# 'max_delta_step': 6.07835552618218,
+# 'max_depth': 50.94531911709876,
+# 'min_child_weight': 10.01593053996585,
+# 'n_estimators': 787.0987580783351,
+# 'reg_alpha': 13.008972248251542,
+# 'reg_lambda': 0.4609240586904695,
+# 'subsample': 0.9054453307650995}
+param_best['n_estimators'] = int(param_best['n_estimators'])
+param_best['max_depth'] = int(param_best['max_depth'])
+
+param_best['tree_method'] = 'hist'
+param_best['booster'] = 'gbtree' 
+param_best['objective'] = 'reg:squarederror'
+param_best['eval_metric'] = 'error'
+param_best['feature_fraction'] = 1.0
+param_best["learning_rate"] = 0.02 
+param_best['n_jobs'] = -1
+
+
+model = global_regressor(**param_best) ## regressor or classifier?
+model.fit(X_train, y_train, verbose=False)
+
+
+
+param_best ={'colsample_bytree': 0.3818480846747036,
+ 'max_delta_step': 6.07835552618218,
+ 'max_depth': 50.94531911709876,
+ 'min_child_weight': 10.01593053996585,
+ 'n_estimators': 787.0987580783351,
+ 'reg_alpha': 13.008972248251542,
+ 'reg_lambda': 0.4609240586904695,
+ 'subsample': 0.9054453307650995}
+param_best['n_estimators'] = int(param_best['n_estimators'])
+param_best['max_depth'] = int(param_best['max_depth'])
+
+param_best['tree_method'] = 'hist'
+param_best['booster'] = 'gbtree' 
+param_best['objective'] = 'reg:squarederror'
+param_best['eval_metric'] = 'error'
+param_best['feature_fraction'] = 1.0
+param_best["learning_rate"] = 0.02 
+param_best['n_jobs'] = -1

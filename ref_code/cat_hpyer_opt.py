@@ -15,8 +15,8 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 from time import time
 import catboost as cat
 
-golbal_regressor  = cat.CatBoostRegressor
-golbal_classifier = cat.CatBoostClassifier
+global_regressor  = cat.CatBoostRegressor
+global_classifier = cat.CatBoostClassifier
 
 # mode = regression , classification
 def get_max_f1_cutoff(model , xs_val , ys_val ):
@@ -37,7 +37,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'RMSE'
         params['eval_metric'] = 'RMSE'
 
-        model = golbal_regressor(**params)
+        model = global_regressor(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -49,7 +49,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['eval_metric'] = 'MultiClass'
         params['num_class'] = len(np.unique(ys))
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -64,7 +64,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['objective'] = 'Logloss'
         params['eval_metric'] = 'AUC'
 
-        model = golbal_classifier(**params)
+        model = global_classifier(**params)
         model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
         pred = model.predict(xtest)
 
@@ -95,7 +95,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['eval_metric'] = 'RMSE'
 
 
-            model = golbal_regressor(**params)
+            model = global_regressor(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 
@@ -108,7 +108,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['eval_metric'] = 'MultiClass'
             params['num_class'] = len(np.unique(ys))
             
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
             #pred_round = pred.round()
@@ -122,7 +122,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['objective'] = 'Logloss'
             params['eval_metric'] = 'AUC'
 
-            model = golbal_classifier(**params)
+            model = global_classifier(**params)
             model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
             pred = model.predict(xtest)
 

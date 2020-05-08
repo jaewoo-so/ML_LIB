@@ -106,6 +106,9 @@ def param_cat(mode , use_gpu = False, is_unbalance = False, random_num = 7):
         params_cat['eval_metric'] = 'MultiClass'
     return params_cat
 
+def param_ng(mode ,  random_num = 7):
+    params_cat = {}
+    return params_cat
 
 def param_rf(mode , njobs = -1, random_num = 7):
     params_rf = dict()
