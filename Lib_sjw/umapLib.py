@@ -42,7 +42,7 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
     umap_model = umap.UMAP(n_neighbors=n_neighbors,
                           min_dist=min_dist,
                           n_components = 2,
-                          metric=dist , save_path = None)
+                          metric=dist , save_dir = None)
     if issupervised:
         embedding = umap_model.fit_transform(xs,ys)
     else:
@@ -56,8 +56,8 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
      # color 의 수는 class 수와 같게 맞춘다. 
     color = sns.color_palette("colorblind", 6)
     sns.scatterplot(embedding[:, 0], embedding[:, 1], hue=ys, ax=ax, palette=color)
-    if save_path is not None:
-        plt.savefig( save_path + '{}_{}_{}.png'.format(dist , str(n_neighbors) ,str(min_dist)))
+    if save_dir is not None:
+        plt.savefig( save_dir + '/{}_{}_{}.png'.format(dist , str(n_neighbors) ,str(min_dist)))
     plt.show()
     return embedding
 
@@ -65,12 +65,13 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
 
 
 
-def umap_combination_unsupervised( xs,ys, dist_list = dist_list , n_neighbor_list = n_neighbor_list, min_dist_list = min_dist_list , issupervised = False , figsize = (8,6)):
+def umap_combination_unsupervised(xs, ys, dist_list=dist_list, n_neighbor_list=n_neighbor_list, min_dist_list=min_dist_list,
+                                                                        issupervised = False , figsize = (8,6) , save_dir = None):
     for dist in dist_list:
         for nn in n_neighbor_list:
             for md in min_dist_list:
                 try:
-                    plot_umap_unsupervised(xs,ys , issupervised ,nn , md , dist , figsize)
+                    plot_umap_unsupervised(xs,ys , issupervised ,nn , md , dist , figsize , save_dir)
                 except:
                     continue
                 
