@@ -279,3 +279,16 @@ param_best['eval_metric'] = 'error'
 param_best['feature_fraction'] = 1.0
 param_best["learning_rate"] = 0.02 
 param_best['n_jobs'] = -1
+
+
+param_xgb = {}
+param_xgb['n_estimators'] = 800
+param_xgb['max_depth'] = 12
+#param_xgb['tree_method'] = 'hist'
+param_xgb['tree_method'] = 'gpu_hist'
+param_xgb['booster'] = 'gbtree' 
+param_xgb['objective'] = 'reg:squarederror'
+param_xgb['eval_metric'] = 'error'
+param_xgb['feature_fraction'] = 1.0
+param_xgb["learning_rate"] = 0.02 
+param_xgb['n_jobs'] = -1

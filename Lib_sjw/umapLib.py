@@ -38,11 +38,11 @@ n_neighbor_list = np.arange(4 , 24 , 4)
 min_dist_list = np.arange(0.1 , 1.0 , 0.1)
 
 
-def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, figsize = (8,6)):
+def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, figsize = (8,6), save_dir = None):
     umap_model = umap.UMAP(n_neighbors=n_neighbors,
                           min_dist=min_dist,
                           n_components = 2,
-                          metric=dist , save_dir = None)
+                          metric=dist )
     if issupervised:
         embedding = umap_model.fit_transform(xs,ys)
     else:
@@ -65,7 +65,7 @@ def plot_umap_unsupervised(xs,ys , issupervised ,n_neighbors , min_dist , dist, 
 
 
 
-def umap_combination_unsupervised(xs, ys, dist_list=dist_list, n_neighbor_list=n_neighbor_list, min_dist_list=min_dist_list,
+def umap_combination_unsupervised(xs, ys = None, dist_list=dist_list, n_neighbor_list=n_neighbor_list, min_dist_list=min_dist_list,
                                                                         issupervised = False , figsize = (8,6) , save_dir = None):
     for dist in dist_list:
         for nn in n_neighbor_list:
