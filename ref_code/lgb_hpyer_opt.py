@@ -175,7 +175,7 @@ def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = No
         
         
          # start scoring
-        if (type(xtest) == type(None) ) or ( type(ytest) == type(None) ):
+        if (type(xtest) == type(None) ) and ( type(ytest) == type(None) ):
             cv_score = objective_fold(params, xdata, ydata, n_split=n_split, mode=mode, usef1=use_f1)  # 여기에 전역 데이터를 넣어야 한다.
         else:
             cv_score = objective_fix(params, xdata, ydata, xtest, ytest, mode=mode, usef1=use_f1)  # 여기에 전역 데이터를 넣어야 한다.
@@ -196,9 +196,6 @@ params['is_unbalance'] = True
 params['seed']=326
 params['bagging_seed']=326
 #params['early_stopping_rounds'] = 100
-
-
-
 
 # Data and run
 # Data Load
