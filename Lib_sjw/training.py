@@ -19,7 +19,7 @@ def training_fixedTest_noVal( mode,
                         model_generator, 
                         model_params, 
                         training_params, 
-                        metric_func, 
+                        metric_func,
                         X, y, X_test, 
                         nradom= 7 , verbose = False):
     '''
@@ -292,7 +292,21 @@ def training_Testfold( mode,
         # test_fold 인덱스 저장 
         test_fold_index['fold'+str(i)] = test_index
 
-        # 폴드 실행
+        # 폴드 실행for i, (train_index, test_index) in enumerate(kfold.split(X, y)):
+        #         if verbose:
+        #             print()
+        #             print('* Test Fold {} *'.format( i ))
+        #
+        #         if type(X) == pd.core.frame.DataFrame:
+        #             xtrain, xtest = X.iloc[train_index], X.iloc[test_index]
+        #             ytrain, ytest = y.iloc[train_index], y.iloc[test_index]
+        #
+        #         else:
+        #             xtrain, xtest = X[train_index], X[test_index]
+        #             ytrain, ytest = y[train_index], y[test_index]
+        #
+        #         # test_fold 인덱스 저장
+        #         test_fold_index['fold'+str(i)] = test_index
         fold_predict , _ , _  , fold_model = training_fixedTest(mode, model_generator, 
                                                                 model_params, 
                                                                 training_params, 
