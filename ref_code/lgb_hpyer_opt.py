@@ -40,7 +40,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['metric'] = 'l2'
 
         model = global_regressor(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
         pred = model.predict(xtest)
 
         #evaluation
@@ -52,7 +52,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['num_class'] = len(np.unique(ys))
 
         model = global_classifier(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
         pred = model.predict(xtest)
 
         #evaluation
@@ -67,7 +67,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['metric'] = 'auc'
 
         model = global_classifier(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , verbose = False)
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
         pred = model.predict(xtest)
 
         #evaluation
@@ -97,7 +97,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['metric'] = 'l2' # eval_set에 사용
 
             model = global_regressor(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
             pred = model.predict(xtest)
 
             #evaluation
@@ -110,7 +110,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['num_class'] = len(np.unique(ys))
 
             model = global_classifier(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
             pred = model.predict(xtest)
             #pred_round = pred.round()
             result = None
@@ -124,7 +124,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['metric'] = 'auc'
 
             model = global_classifier(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , verbose = False)
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
             pred = model.predict(xtest)
 
             #evaluation

@@ -325,7 +325,7 @@ def fold_splitter(mode , X,y , nfold , nrandom):
     if mode == 'regression':
         kfold = KFold(n_splits=nfold, random_state=nrandom, shuffle=True)
     elif (mode == 'classification') or (mode == 'binary'):
-        kfold = StratifiedKFold(n_splits=nfold, random_state=nrandom, shuffle=False)
+        kfold = StratifiedKFold(n_splits=nfold, random_state=nrandom, shuffle=True)
     return kfold
 
 def train_model(model_generator , model_params , training_params ):

@@ -15,7 +15,7 @@ def param_xgb( mode , num_class = 2 , use_gpu = False, random_num = 7):
     params_xgb['lambda_l1']    = 0.3
     params_xgb['lambda_l2']    = 0.4
     params_xgb['max_depth']    = 9
- 
+    params_xgb['enable_categorical']      = True
     # gpu , cpu
     if use_gpu:
         params_xgb['tree_method'] = 'gpu_hist'

@@ -6,6 +6,7 @@ def param_xgb( mode , num_class = 2 , use_gpu = False, random_num = 7):
     '''
     params_xgb = dict()
     params_xgb['booster']      = 'gbtree'
+    params_xgb['enable_categorical']      = True
     # gpu , cpu
     if use_gpu:
         params_xgb['tree_method'] = 'gpu_hist'
