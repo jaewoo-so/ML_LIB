@@ -15,8 +15,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-
-
 import lightgbm as lgb
 global_regressor  = lgb.LGBMRegressor
 global_classifier = lgb.LGBMClassifier
@@ -34,13 +32,14 @@ def get_max_f1_cutoff(model , xs_val , ys_val ):
     df_prre = df_prre.sort_values(by = 'f1' , ascending = False)
     return df_prre.iloc[0,:]
 
-def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = False):
+
+def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = False, cat_feature = []):
     if mode == 'regression':
         params['objective'] = 'regression'
         params['metric'] = 'l2'
 
         model = global_regressor(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , categorical_feature = cat_feature)
         pred = model.predict(xtest)
 
         #evaluation
@@ -52,7 +51,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['num_class'] = len(np.unique(ys))
 
         model = global_classifier(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , categorical_feature = cat_feature)
         pred = model.predict(xtest)
 
         #evaluation
@@ -67,7 +66,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
         params['metric'] = 'auc'
 
         model = global_classifier(**params)
-        model.fit(xs,ys,eval_set=[(xtest,ytest)] , )
+        model.fit(xs,ys,eval_set=[(xtest,ytest)] , categorical_feature = cat_feature)
         pred = model.predict(xtest)
 
         #evaluation
@@ -80,7 +79,7 @@ def objective_fix(params, xs , ys , xtest , ytest , mode = 'regression',usef1 = 
     return result
 
 
-def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
+def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False, cat_feature = []):
     
     if mode == 'regression':
         kfold = KFold(n_splits=n_split, random_state=7, shuffle=True)
@@ -97,7 +96,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['metric'] = 'l2' # eval_set에 사용
 
             model = global_regressor(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)], categorical_feature = cat_feature)
             pred = model.predict(xtest)
 
             #evaluation
@@ -110,7 +109,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['num_class'] = len(np.unique(ys))
 
             model = global_classifier(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)], categorical_feature=cat_feature )
             pred = model.predict(xtest)
             #pred_round = pred.round()
             result = None
@@ -124,7 +123,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
             params['metric'] = 'auc'
 
             model = global_classifier(**params)
-            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , )
+            model.fit(xtrain,ytrain,eval_set=[(xtest,ytest)] , categorical_feature = cat_feature)
             pred = model.predict(xtest)
 
             #evaluation
@@ -139,7 +138,7 @@ def objective_fold(params,xs,ys,n_split = 5, mode = 'regression',usef1 = False):
     return np.asarray(allscore).mean()
 
 
-def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = None, n_split = 5 , use_f1 = False):
+def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = None, n_split = 5 , use_f1 = False, cat_feature= []):
     def lgbm_eval(num_iterations,
                   num_leaves,
                   colsample_bytree,
@@ -171,17 +170,19 @@ def create_bysop_eval(params , mode ,  xdata , ydata , xtest = None , ytest = No
         params['learning_rate'] = max(learning_rate, 0.0001)
         params['bagging_fraction'] = min(bagging_fraction, 1.0)
         params['feature_fraction'] = min(feature_fraction, 1.0)
-        params['verbose']= -1
+        #params['verbose']= -1
         
         
          # start scoring
         if (type(xtest) == type(None) ) and ( type(ytest) == type(None) ):
-            cv_score = objective_fold(params, xdata, ydata, n_split=n_split, mode=mode, usef1=use_f1)  # 여기에 전역 데이터를 넣어야 한다.
+            cv_score = objective_fold(params, xdata, ydata, n_split=n_split, mode=mode, usef1=use_f1, cat_feature = cat_feature)  # 여기에 전역 데이터를 넣어야 한다.
         else:
-            cv_score = objective_fix(params, xdata, ydata, xtest, ytest, mode=mode, usef1=use_f1)  # 여기에 전역 데이터를 넣어야 한다.
+            cv_score = objective_fix(params, xdata, ydata, xtest, ytest, mode=mode, usef1=use_f1, cat_feature = cat_feature)  # 여기에 전역 데이터를 넣어야 한다.
         gc.collect()
         return cv_score
     return lgbm_eval
+    
+    
     
 
 # multi calss classification
@@ -221,7 +222,7 @@ for k, v in df_list.items():
     y_train = y_train.flatten()
     y_test = y_test.flatten()
 
-    lgb_eval = create_bysop_eval(params ,k,X_train,y_train,X_test,y_test,5, use_f1 = True)
+    lgb_eval = create_bysop_eval(params ,k,X_train,y_train,X_test,y_test,5, use_f1 = True, cat_feature = [])
     clf_bo = BayesianOptimization(lgb_eval, {'num_iterations' : (2, 1000),
                                             'num_leaves': (42, 5000),
                                             'colsample_bytree': (0.001, 1),
@@ -241,7 +242,7 @@ for k, v in df_list.items():
     print(clf_bo.max)
     print('-' * 100)
     
-    lgb_eval = create_bysop_eval(params ,k ,X_train,y_train,5, use_f1 = True)
+    lgb_eval = create_bysop_eval(params ,k ,X_train,y_train,5, use_f1 = True, cat_feature = [])
     clf_bo = BayesianOptimization(lgb_eval, {'num_iterations' : ( 2 , 1000 ),
                                              'num_leaves': (42, 5000),
                                             'colsample_bytree': (0.001, 1),
