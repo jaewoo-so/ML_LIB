@@ -2,9 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler 
 from sklearn.metrics import roc_auc_score, average_precision_score
 import numpy as np
-import numba as nb
-#region use training_fixedTest
-import multiprocessing
+
 
 
 
