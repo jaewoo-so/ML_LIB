@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
 
 
-    from sklearn.datasets import load_boston , load_iris , load_breast_cancer
+    from sklearn.datasets import fetch_california_housing , load_iris , load_breast_cancer
     from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score , average_precision_score
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import MinMaxScaler 

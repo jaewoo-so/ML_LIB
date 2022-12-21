@@ -37,8 +37,8 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders_sjw import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_california_housing
+    >>> bunch = fetch_california_housing()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = PolynomialEncoder(cols=['CHAS', 'RAD']).fit(X, y)

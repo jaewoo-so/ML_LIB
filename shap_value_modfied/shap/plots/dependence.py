@@ -172,11 +172,11 @@ def dependence_plot(ind, shap_values, features, feature_names=None, display_feat
     if interaction_index is not None:
         cv = features[:, interaction_index]
         cd = display_features[:, interaction_index]
-        clow = np.nanpercentile(cv.astype(np.float), 5)
-        chigh = np.nanpercentile(cv.astype(np.float), 95)
+        clow = np.nanpercentile(cv.astype(np.float64), 5)
+        chigh = np.nanpercentile(cv.astype(np.float64), 95)
         if clow == chigh:
-            clow = np.nanmin(cv.astype(np.float))
-            chigh = np.nanmax(cv.astype(np.float))
+            clow = np.nanmin(cv.astype(np.float64))
+            chigh = np.nanmax(cv.astype(np.float64))
         if type(cd[0]) == str:
             cname_map = {}
             for i in range(len(cv)):
@@ -188,8 +188,8 @@ def dependence_plot(ind, shap_values, features, feature_names=None, display_feat
 
         # discritize colors for categorical features
         if categorical_interaction and clow != chigh:
-            clow = np.nanmin(cv.astype(np.float))
-            chigh = np.nanmax(cv.astype(np.float))
+            clow = np.nanmin(cv.astype(np.float64))
+            chigh = np.nanmax(cv.astype(np.float64))
             bounds = np.linspace(clow, chigh, int(chigh - clow + 2))
             color_norm = matplotlib.colors.BoundaryNorm(bounds, cmap.N-1)
 
@@ -198,7 +198,7 @@ def dependence_plot(ind, shap_values, features, feature_names=None, display_feat
         if x_jitter > 1: x_jitter = 1
         xvals = xv.copy()
         if isinstance(xvals[0], float):
-            xvals = xvals.astype(np.float)
+            xvals = xvals.astype(np.float64)
             xvals = xvals[~np.isnan(xvals)]
         xvals = np.unique(xvals) # returns a sorted array
         if len(xvals) >= 2:

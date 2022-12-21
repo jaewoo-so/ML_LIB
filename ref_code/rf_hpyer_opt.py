@@ -146,9 +146,9 @@ params['n_jobs'] = -1
 # Data and run
 # Data Load
 # exsample
-from sklearn.datasets import load_boston, load_breast_cancer, load_iris
+from sklearn.datasets import fetch_california_housing, load_breast_cancer, load_iris
 
-df_regression = load_boston()
+df_regression = fetch_california_housing()
 df_binary = load_breast_cancer()
 df_multi = load_iris()
 

@@ -30,7 +30,7 @@ def imagenet50(display=False, resolution=224):
 def boston(display=False):
     """ Return the boston housing data in a nice package. """
 
-    d = sklearn.datasets.load_boston()
+    d = sklearn.datasets.fetch_california_housing()
     df = pd.DataFrame(data=d.data, columns=d.feature_names) # pylint: disable=E1101
     return df, d.target # pylint: disable=E1101
 
@@ -71,7 +71,7 @@ def communitiesandcrime(display=False):
 
     # find the indices where the total violent crimes are known
     valid_inds = np.where(np.invert(np.isnan(raw_data.iloc[:,-2])))[0]
-    y = np.array(raw_data.iloc[valid_inds,-2], dtype=np.float)
+    y = np.array(raw_data.iloc[valid_inds,-2], dtype=np.float64)
 
     # extract the predictive features and remove columns with missing values
     X = raw_data.iloc[valid_inds,5:-18]

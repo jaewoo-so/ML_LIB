@@ -26,9 +26,9 @@ def training_blending_fixedTest(mode,
         print('Training Model : {}'.format( model_generator.__class__.__name__))
   
     if mode == 'classification':
-        train_pred = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float)
+        train_pred = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float64)
     else:
-        train_pred = np.zeros( (X.shape[0] ) , dtype = np.float)
+        train_pred = np.zeros( (X.shape[0] ) , dtype = np.float64)
 
     kfold = fold_splitter(mode, X, y, blending_fold, nradom)
     
@@ -79,9 +79,9 @@ def training_blending_Testfold_noVal( mode,
     
 
     if mode == 'classification':
-        train_pred = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float)
+        train_pred = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float64)
     else:
-        train_pred = np.zeros( (X.shape[0] ) , dtype = np.float)
+        train_pred = np.zeros( (X.shape[0] ) , dtype = np.float64)
 
     test_fold_index = OrderedDict()
     fold_train_pred = OrderedDict()

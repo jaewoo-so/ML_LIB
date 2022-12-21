@@ -29,7 +29,7 @@ def param_xgb( mode , num_class = 2 , use_gpu = False, random_num = 7):
     elif mode == 'binary':
         params_xgb['objective']    = 'binary:logistic'
     elif mode == 'classification':
-        params_xgb['objective']    = 'multi:softmax'
+        params_xgb['objective']    = 'multi:softproba'
         params_xgb['num_class'] = num_class
         #params['eval_metric'] = 'mlogloss'
 

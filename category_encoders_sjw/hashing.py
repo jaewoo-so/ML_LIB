@@ -62,8 +62,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders_sjw.hashing import HashingEncoder
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_california_housing
+    >>> bunch = fetch_california_housing()
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> y = bunch.target
     >>> he = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)

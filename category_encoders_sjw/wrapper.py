@@ -30,9 +30,9 @@ class MultiClassWrapper(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders_sjw import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
+    >>> from sklearn.datasets import fetch_california_housing
     >>> from category_encoders_sjw.wrapper import MultiClassWrapper
-    >>> bunch = load_boston()
+    >>> bunch = fetch_california_housing()
     >>> y = bunch.target
     >>> y = (y/10).round().astype(int)  # we create 6 artificial classes
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)

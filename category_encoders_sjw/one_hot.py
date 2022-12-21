@@ -39,8 +39,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders_sjw import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_california_housing
+    >>> bunch = fetch_california_housing()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = OneHotEncoder(cols=['CHAS', 'RAD'], handle_unknown='indicator').fit(X, y)

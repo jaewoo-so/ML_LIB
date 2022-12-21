@@ -158,7 +158,7 @@ def result2df_rowmodel_colfold_acc_multi(res_all , ytest ):
     return result
     
 
-
+'''
 import pickle
 from sklearn.metrics import roc_auc_score
 from sklearn.datasets import load_breast_cancer
@@ -182,3 +182,4 @@ if __name__ == "__main__":
         print('toy example done')
     toy_example()
 
+'''

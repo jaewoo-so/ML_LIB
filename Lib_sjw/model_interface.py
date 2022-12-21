@@ -112,7 +112,7 @@ class myLGBMClassifier:
             self.model = lgb.train(params_all, lgb_train)
         else:
             lgb_eval = lgb.Dataset(xtest, ytest, params={'verbose': -1},free_raw_data=False)
-            self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval, verbose_eval=False)
+            self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval)
         
     def predict(self , xs ):
         return self.model.predict(xs) 
@@ -135,7 +135,7 @@ class myLGBMBinary:
             self.model = lgb.train(params_all, lgb_train)
         else:
             lgb_eval = lgb.Dataset(xtest, ytest, params={'verbose': -1},free_raw_data=False)
-            self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval, verbose_eval=False)
+            self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval)
         
     def predict(self , xs , threshold = 0.5):
         return np.where(self.model.predict(xs) > threshold , 1 , 0)

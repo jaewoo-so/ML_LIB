@@ -3,6 +3,7 @@ import numpy as np
 from time import time
 import datetime
 from collections import OrderedDict
+from sklearn.preprocessing import OneHotEncoder
 import pandas as pd
 import copy
 
@@ -14,6 +15,7 @@ def training_binary():
     pass
 
 from lightgbm import LGBMClassifier , LGBMRegressor
+
 # todo : save model 기능 추가해야 한다.
 def training_fixedTest_noVal( mode, 
                         model_generator, 
@@ -63,9 +65,9 @@ def training_Testfold_noVal( mode,
     test_fold_index = OrderedDict()
 
     if mode == 'classification':
-        oof = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float)
+        oof = np.zeros( ( X.shape[0]  , len(np.unique(y))) , dtype = np.float64)
     else:
-        oof = np.zeros( (X.shape[0] ) , dtype = np.float)
+        oof = np.zeros( (X.shape[0] ) , dtype = np.float64)
 
 
     
@@ -168,11 +170,11 @@ def training_fixedTest( mode,
         print('Training {} Fold on Model : {}'.format( nfold , model_generator.__class__.__name__))
 
     fold_metric=OrderedDict()
-    
+    print(np.unique(y))
     if mode == 'classification':
-        fold_oof = np.zeros((y.shape[0] , len(np.unique(y))) , dtype = np.float)
+        fold_oof = np.zeros((y.shape[0] , len(np.unique(y))) , dtype = np.float64)
     else:
-        fold_oof = np.zeros_like(y , dtype = np.float)
+        fold_oof = np.zeros_like(y , dtype = np.float64)
 
 
     fold_predict = OrderedDict()
@@ -196,11 +198,18 @@ def training_fixedTest( mode,
         res_oof = model.predict_proba(xval)
         res_pred = model.predict_proba(X_test)
         
+        # y를 원핫으로 
+        enc = OneHotEncoder(handle_unknown='ignore')
+        enc.fit(y)
+
         #save
         if mode == 'classification': # 클래스의 갯수만큼 마지막 차원이 늘어난다. [ 0.9 , 0.01 , 0.99]
             fold_oof[val_index, :] = res_oof
             fold_predict['fold'+ str(i)] = res_pred
-            fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
+            if yval.shape != res_oof:
+                fold_metric['fold' + str(i)] = metric_func( enc.transform(yval).toarray() , res_oof)
+            else:    
+                fold_metric['fold' + str(i)] = metric_func( yval , res_oof)
             fold_model['fold'  + str(i)] = copy.deepcopy(model)
         else: # binary
             if len(res_oof.shape) == 1:
@@ -266,9 +275,9 @@ def training_Testfold( mode,
     test_fold_index = OrderedDict()
 
     if mode == 'classification':
-        oof = np.zeros( (val_nfold , X.shape[0]  , len(np.unique(y))) , dtype = np.float)
+        oof = np.zeros( (val_nfold , X.shape[0]  , len(np.unique(y))) , dtype = np.float64)
     else:
-        oof = np.zeros( (X.shape[0] , val_nfold) , dtype = np.float)
+        oof = np.zeros( (X.shape[0] , val_nfold) , dtype = np.float64)
 
 
     

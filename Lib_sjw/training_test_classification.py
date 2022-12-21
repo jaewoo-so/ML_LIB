@@ -18,7 +18,7 @@ from collections import OrderedDict
 
 
 
-from sklearn.datasets import load_boston , load_iris , load_breast_cancer
+from sklearn.datasets import fetch_california_housing , load_iris , load_breast_cancer
 
 '''
 1. 데이터 만들기
