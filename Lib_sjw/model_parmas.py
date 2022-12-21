@@ -58,7 +58,7 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     params_lgb['feature_fraction_seed'] = random_num
     params_lgb['lambda_l1'] = 0
     params_lgb['lambda_l2'] = 0
-    params_lgb['verbose'] = 0
+    params_lgb['verbosity'] = -1
     
     # gpu , cpu
     if use_gpu:
