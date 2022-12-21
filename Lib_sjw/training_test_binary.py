@@ -1,14 +1,21 @@
+import os
+os.chdir(os.path.dirname(__file__))
+print(os.getcwd()) # 이걸로 보고, 이거 기준으로 
+
+import sys
+sys.path.append('../') # 이런식으로 설정하면 된다.
+sys.path.append(os.path.dirname(__file__))
+
+
 import Lib_sjw.training as tr
 import Lib_sjw.model_interface as mi
 import Lib_sjw.model_parmas as mp
 import Lib_sjw.evaluator as ev
 import Lib_sjw.classification_util as cu
 
-
 from sklearn.datasets import fetch_california_housing , load_iris , load_breast_cancer
 from sklearn.datasets import fetch_openml
     
-
 from sklearn.metrics import mean_squared_error , roc_auc_score , precision_score , roc_curve
 from sklearn.model_selection import train_test_split
 import numpy as np

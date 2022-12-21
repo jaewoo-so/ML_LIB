@@ -199,8 +199,16 @@ def training_fixedTest( mode,
         
         # y를 원핫으로 
         enc = OneHotEncoder(handle_unknown='ignore')
-        enc.fit(y)
 
+        if type(y) != np.ndarray:
+            y_arr = y.values
+            if len(y_arr.shape) == 1:
+                 y_arr = y_arr.reshape(-1,1)
+            enc.fit(y_arr)
+
+        else:
+            enc.fit(y)
+        
         #save
         if mode == 'classification': # 클래스의 갯수만큼 마지막 차원이 늘어난다. [ 0.9 , 0.01 , 0.99]
             fold_oof[val_index, :] = res_oof
