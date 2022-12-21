@@ -42,7 +42,7 @@ def param_lgbm(mode , num_class = 2, use_gpu = False, is_unbalance = False, rand
     params_lgb = {
         'max_depth': 15,
         'min_child_weight': 0.0,
-        'min_data_in_leaf': 0,
+        'min_data_in_leaf': 6,
         'min_split_gain': 0.0,
         'num_leaves': 100}
 

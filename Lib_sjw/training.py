@@ -170,7 +170,6 @@ def training_fixedTest( mode,
         print('Training {} Fold on Model : {}'.format( nfold , model_generator.__class__.__name__))
 
     fold_metric=OrderedDict()
-    print(np.unique(y))
     if mode == 'classification':
         fold_oof = np.zeros((y.shape[0] , len(np.unique(y))) , dtype = np.float64)
     else:
