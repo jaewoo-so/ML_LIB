@@ -174,7 +174,7 @@ def t_test_models(src, names, cmap=plt.cm.Greys, title='', fig_size=(6, 6), save
         plt.savefig(save_path)
     plt.show()
 
-# regression
+#region regression
 # regression에서 aucpr구하기
 from sklearn.preprocessing import MinMaxScaler
 
@@ -194,7 +194,7 @@ def regression_aucpr(res , ytest , threshold):
 #endregion
 
 # 결과 로딩
-import pickle 
+import pickle
 import numpy as np
 import pandas as pd 
 from sklearn.metrics import roc_auc_score
