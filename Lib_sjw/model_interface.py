@@ -156,7 +156,7 @@ class myLGBMRegressor:
         params_all = {**self.params, **fit_params}
         lgb_train = lgb.Dataset(xtrain, ytrain, params={'verbose': -1}, free_raw_data=False)
         if type(xtest) == type(None) or type(ytest) == type(None) :
-            self.model = lgb.train(params_all, lgb_train)
+            self.model = lgb.train(params_all, lgb_train, verbose_eval=False)
         else:
             lgb_eval = lgb.Dataset(xtest, ytest, params={'verbose': -1},free_raw_data=False)
             self.model = lgb.train(params_all, lgb_train, valid_sets=lgb_eval, verbose_eval=False)
