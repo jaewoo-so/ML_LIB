@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from collections import OrderedDict
 from sklearn.metrics import accuracy_score
 
@@ -86,7 +87,7 @@ def result2df_rowsample_colmodel_test_nonfixtest(res_all):
     df_res = pd.DataFrame(res)
     return df_res
 
-def result2df_rowsample_colmodel_testmean(res_all):
+def result2df_rowsample_colmodel_testmean_old(res_all):
     '''
     res_all format in Test_Regression
 
@@ -103,6 +104,20 @@ def result2df_rowsample_colmodel_testmean(res_all):
         res[model_name] = np.mean(result , axis = 0)
     df_res = pd.DataFrame(res)
     return df_res
+def result2df_rowsample_colmodel_testmean(res_all):
+    '''
+    res_all format in Test_Regression
+
+    fold_predict , fold_oof , fold_metric , fold_models = tr.training_fixedTest( )
+    res_all[name] = [ fold_predict , fold_oof , fold_metric , fold_models ]
+    '''
+    res = {}
+    for model_name in res_all:
+        pred_res = res_all[model_name][0]
+        res[model_name] = np.vstack(pred_res.values())
+    df_res = pd.DataFrame(res)
+    return df_res
+
 
 # --- dictionary each model ---
 def result2dict_name_model(res_all):
@@ -157,6 +172,28 @@ def result2df_rowmodel_colfold_acc_multi(res_all , ytest ):
     result['mean'] = result.mean(axis = 1)
     return result
     
+
+## -------- 아래의 경우 결과 표시
+'''
+fold_predict , fold_oof , fold_metric , fold_model = tr.training_fixedTest('classification' , model_list[name] , param_list[name] , fitpm_list[name] ,  metric_func , xtrain , ytrain , xtest , nfold  ) 
+        result_list[name] = [fold_predict , fold_oof , fold_metric , fold_model]
+'''
+
+#모델별 폴드의 평균 스코어 
+def result2df_rowmodel_fold_mean_acc(result):
+    res = {}
+    for model_name in result:
+        scores = []
+        for col in result[model_name][2]:
+            score_oof = result[model_name][2][col].mean()
+            scores.append(score_oof)
+        score_mean = np.mean(scores)    
+        res[model_name] = [score_mean]
+
+    return pd.DataFrame.from_dict(res)
+
+
+
 
 '''
 import pickle
