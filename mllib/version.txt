@@ -1,0 +1,8 @@
+2019-08-30 : regression , classification training-test 완료 
+2019-10 : 유틸 함수 추가 ( 미정리 ) 
+2019-12 
+    - ANN ,  Radige , Lasso 추가 
+    - validation 없는 트레이닝 버전 추가 
+    - umap + 시각화 plotly 버전 추가 
+    
+         
